@@ -132,7 +132,6 @@ export default function Home() {
                 height="50"
                 viewBox="0 0 369.65517241379314 71.3211525244027"
               >
-                <defs id="SvgjsDefs4089"></defs>
                 <g
                   id="SvgjsG4090"
                   transform="matrix(0.7132115252440271,0,0,0.7132115252440271,-5.488162469097904,1.700428784475391e-7)"
@@ -155,7 +154,6 @@ export default function Home() {
                 </g>
                 <g
                   id="SvgjsG4091"
-                  featurekey="nameFeature-0"
                   transform="matrix(0.615163280317642,0,0,0.615163280317642,76.97216696318189,23.23092152653373)"
                   fill="#48466d"
                 >
