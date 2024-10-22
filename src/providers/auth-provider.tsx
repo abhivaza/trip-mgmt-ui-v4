@@ -1,38 +1,48 @@
 // src/AuthContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { User } from "firebase/auth";
+import {
+  User,
+} from "firebase/auth";
 import { auth } from "@/firebase";
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
+  jwtToken: string | null;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [jwtToken, setJwtToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setUser(user);
-      setLoading(false);
+      if (user) {
+        const token = await user.getIdToken();
+        setJwtToken(token);
+      } else {
+        setJwtToken(null);
+      }
     });
 
     return () => unsubscribe();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, jwtToken }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

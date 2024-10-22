@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "@/hooks/use-toast";
+import { useApi } from "@/providers/api-provider";
 
 export default function Home() {
   const [destination, setDestination] = useState("");
@@ -35,6 +36,8 @@ export default function Home() {
   const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
+
+  const api = useApi();
 
   const popularDestinations = [
     {
@@ -88,20 +91,8 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/generate-itinerary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ destination }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate itinerary");
-      }
-
-      const data = await response.json();
-      router.push(`/itinerary/${data.id}`);
+      const response = await api.get("/auth/generate");
+      router.push(`/123`);
     } catch (error) {
       console.error("Error:", error);
       toast({
