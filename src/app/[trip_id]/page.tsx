@@ -16,12 +16,12 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
-import { Itinerary } from "@/types/itinerary";
+import { ItineraryResponse } from "@/types/itinerary";
 import { useParams } from "next/navigation";
 
 export default function ItineraryPage() {
   const [isMobile, setIsMobile] = useState(false);
-  const [itinerary, setItinerary] = useState<Itinerary[]>([]);
+  const [itinerary, setItinerary] = useState<ItineraryResponse>();
 
   const params: { trip_id: string } = useParams();
   const { trip_id } = params;
@@ -47,10 +47,20 @@ export default function ItineraryPage() {
       try {
         const itineraryData = await api.post<
           { destination: string },
-          Itinerary[]
+          ItineraryResponse
         >("/auth/generate", {
           destination: trip_id,
         });
+
+        if (itineraryData?.itinerary?.length == 0) {
+          toast({
+            title: "Error",
+            description: "Invalid destination. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         setItinerary(itineraryData);
       } catch (error) {
         console.error("Error:", error);
@@ -64,7 +74,7 @@ export default function ItineraryPage() {
     }
 
     fetchData();
-  }, []);
+  }, [api, trip_id]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -131,7 +141,7 @@ export default function ItineraryPage() {
 
       <ScrollArea className="h-[calc(100vh-200px)] pr-4">
         <div className="space-y-6">
-          {itinerary.map((day) => (
+          {itinerary?.itinerary.map((day) => (
             <Card key={day.day} className="w-full">
               <CardHeader>
                 <CardTitle className="flex justify-between items-center">

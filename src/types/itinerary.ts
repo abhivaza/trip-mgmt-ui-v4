@@ -8,3 +8,8 @@ export interface Itinerary {
     evening: string[]; // Activities scheduled for the evening.
   };
 }
+
+export interface ItineraryResponse {
+  message: string;
+  itinerary: Itinerary[];
+}

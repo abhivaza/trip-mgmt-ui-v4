@@ -19,6 +19,7 @@ import {
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { useApi } from "@/providers/api-provider";
+import { useAuth } from "@/providers/auth-provider";
 
 export default function Home() {
   const [destination, setDestination] = useState("");
@@ -39,6 +40,7 @@ export default function Home() {
 
   const api = useApi();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const popularDestinations = [
     {
@@ -80,6 +82,14 @@ export default function Home() {
   ];
 
   const handleGenerateItinerary = async () => {
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to generate an itinerary.",
+        variant: "destructive",
+      });
+      return;
+    }
     if (!destination) {
       toast({
         title: "Destination required",
