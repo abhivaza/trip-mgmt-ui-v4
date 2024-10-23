@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { AppProvider } from "@/providers/app-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Travel Minder",
@@ -16,11 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#ffe4e6] to-[#dbeafe]">
-          <Header />
-          {children}
-          <Footer />
-        </div>
+        <AppProvider>
+          <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#ffe4e6] to-[#dbeafe]">
+            <Header />
+            {children}
+            <Footer />
+          </div>
+          <Toaster />
+        </AppProvider>
       </body>
     </html>
   );

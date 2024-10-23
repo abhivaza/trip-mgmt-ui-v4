@@ -7,9 +7,30 @@ import { LogIn, Menu } from "lucide-react";
 import Link from "next/link";
 import CompanyLogo from "@/components/company-logo";
 import { useState } from "react";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useAuth } from "@/providers/auth-provider";
+import { auth } from "@/firebase";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
+
+  const signInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await auth.signOut();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <header className="py-4 px-4 md:px-8 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
@@ -39,13 +60,25 @@ export default function Header() {
                 Try out the beta
               </Link>
             </nav>
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden md:flex items-center"
-            >
-              <LogIn className="mr-2 h-4 w-4" /> Login
-            </Button>
+            {user ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden md:flex items-center"
+                onClick={signOut}
+              >
+                <LogIn className="mr-2 h-4 w-4" /> Logout
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden md:flex items-center"
+                onClick={signInWithGoogle}
+              >
+                <LogIn className="mr-2 h-4 w-4" /> Login
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -76,13 +109,25 @@ export default function Header() {
             >
               Try out the beta
             </Link>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center w-full justify-center"
-            >
-              <LogIn className="mr-2 h-4 w-4" /> Login
-            </Button>
+            {user ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center w-full justify-center"
+                onClick={signOut}
+              >
+                <LogIn className="mr-2 h-4 w-4" /> Logout
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center w-full justify-center"
+                onClick={signInWithGoogle}
+              >
+                <LogIn className="mr-2 h-4 w-4" /> Login
+              </Button>
+            )}
           </nav>
         )}
       </div>

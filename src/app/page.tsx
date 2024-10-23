@@ -17,7 +17,9 @@ import {
   Map,
 } from "lucide-react";
 import Image from "next/image";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { useApi } from "@/providers/api-provider";
+import { useAuth } from "@/providers/auth-provider";
 
 export default function Home() {
   const [destination, setDestination] = useState("");
@@ -35,6 +37,10 @@ export default function Home() {
   const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
+
+  const api = useApi();
+  const { toast } = useToast();
+  const { user } = useAuth();
 
   const popularDestinations = [
     {
@@ -76,6 +82,14 @@ export default function Home() {
   ];
 
   const handleGenerateItinerary = async () => {
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to generate an itinerary.",
+        variant: "destructive",
+      });
+      return;
+    }
     if (!destination) {
       toast({
         title: "Destination required",
@@ -84,34 +98,7 @@ export default function Home() {
       });
       return;
     }
-
-    setIsLoading(true);
-
-    try {
-      const response = await fetch("/api/generate-itinerary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ destination }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate itinerary");
-      }
-
-      const data = await response.json();
-      router.push(`/itinerary/${data.id}`);
-    } catch (error) {
-      console.error("Error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to generate itinerary. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    router.push(`/` + destination);
   };
 
   return (
