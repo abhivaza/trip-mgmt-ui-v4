@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
+
 import { useAuth } from "@/providers/auth-provider";
 
 export default function Home() {

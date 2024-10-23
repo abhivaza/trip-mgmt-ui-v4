@@ -18,6 +18,7 @@ import { useParams } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 
+
 export default function ItineraryPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [itinerary, setItinerary] = useState<ItineraryResponse>();
@@ -78,6 +79,7 @@ export default function ItineraryPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center">Your Itinerary</h1>
+
       {
         <Swiper
           modules={[Pagination, Navigation]}
@@ -142,6 +144,7 @@ export default function ItineraryPage() {
         </Swiper>
       }
 
+
       <ScrollArea className="h-[calc(100vh-200px)] pr-4">
         <div className="space-y-6">
           {itinerary?.itinerary.map((day) => (
@@ -174,6 +177,7 @@ export default function ItineraryPage() {
                               <li key={index}>{activity}</li>
                             )
                           )}
+
                         </ul>
                         {timeOfDay !== "evening" && (
                           <Separator className="my-2" />

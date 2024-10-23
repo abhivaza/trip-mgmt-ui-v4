@@ -15,3 +15,4 @@ export interface ItineraryResponse {
 }
 
 export type TimeOfDay = "morning" | "afternoon" | "evening";
+
