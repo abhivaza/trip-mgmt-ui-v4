@@ -18,12 +18,10 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
-import { useApi } from "@/providers/api-provider";
 import { useAuth } from "@/providers/auth-provider";
 
 export default function Home() {
   const [destination, setDestination] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
@@ -38,7 +36,6 @@ export default function Home() {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  const api = useApi();
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -119,13 +116,9 @@ export default function Home() {
             onChange={(e) => setDestination(e.target.value)}
             className="flex-grow border-none focus:ring-0"
           />
-          <Button
-            onClick={handleGenerateItinerary}
-            disabled={isLoading}
-            className="ml-2"
-          >
-            {isLoading ? "Generating..." : "Let's go"}
-            {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
+          <Button onClick={handleGenerateItinerary} className="ml-2">
+            {"Let's go"}
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>

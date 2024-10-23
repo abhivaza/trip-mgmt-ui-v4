@@ -13,3 +13,5 @@ export interface ItineraryResponse {
   message: string;
   itinerary: Itinerary[];
 }
+
+export type TimeOfDay = "morning" | "afternoon" | "evening";
