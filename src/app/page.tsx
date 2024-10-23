@@ -17,7 +17,7 @@ import {
   Map,
 } from "lucide-react";
 import Image from "next/image";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useApi } from "@/providers/api-provider";
 
 export default function Home() {
@@ -38,6 +38,7 @@ export default function Home() {
   }, [emblaApi]);
 
   const api = useApi();
+  const { toast } = useToast();
 
   const popularDestinations = [
     {
@@ -87,22 +88,7 @@ export default function Home() {
       });
       return;
     }
-
-    setIsLoading(true);
-
-    try {
-      const response = await api.get("/auth/generate");
-      router.push(`/123`);
-    } catch (error) {
-      console.error("Error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to generate itinerary. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    router.push(`/` + destination);
   };
 
   return (
