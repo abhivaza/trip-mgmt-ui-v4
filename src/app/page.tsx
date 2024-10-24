@@ -20,6 +20,8 @@ import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 
 import { useAuth } from "@/providers/auth-provider";
+import { ItineraryResponse } from "@/types/itinerary";
+import { useApi } from "@/providers/api-provider";
 
 export default function Home() {
   const [destination, setDestination] = useState("");
@@ -37,8 +39,10 @@ export default function Home() {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const api = useApi();
 
   const popularDestinations = [
     {
@@ -96,7 +100,41 @@ export default function Home() {
       });
       return;
     }
-    router.push(`/` + destination);
+
+    async function fetchData() {
+      let itineraryData = null;
+      try {
+        setIsLoading(true);
+        itineraryData = await api.post<
+          { destination: string },
+          ItineraryResponse
+        >("/trip/generate", {
+          destination: destination,
+        });
+
+        if (itineraryData?.itinerary?.length == 0) {
+          toast({
+            title: "Error",
+            description: "Invalid destination. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        toast({
+          title: "Error",
+          description: "Failed to generate itinerary. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+
+      if (itineraryData) router.push(`/trip/${itineraryData?.tripId}`);
+      else return;
+    }
+
+    fetchData();
   };
 
   return (
@@ -117,9 +155,14 @@ export default function Home() {
             onChange={(e) => setDestination(e.target.value)}
             className="flex-grow border-none focus:ring-0"
           />
-          <Button onClick={handleGenerateItinerary} className="ml-2">
-            {"Let's go"}
-            <ArrowRight className="ml-2 h-4 w-4" />
+
+          <Button
+            onClick={handleGenerateItinerary}
+            disabled={isLoading}
+            className="ml-2"
+          >
+            {isLoading ? "Generating..." : "Let's go"}
+            {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
         </div>
       </div>
