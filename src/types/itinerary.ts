@@ -8,11 +8,23 @@ export interface Itinerary {
     evening: string[]; // Activities scheduled for the evening.
   };
 }
-
 export interface ItineraryResponse {
+  tripId: string;
   message: string;
-  itinerary: Itinerary[];
+  city: string;
+  country: string;
+  popularityRank: number;
+  tags: string[];
+  itinerary: Array<{
+    day: number;
+    title: string;
+    description: string;
+    activities: {
+      morning: string[];
+      afternoon: string[];
+      evening: string[];
+    };
+  }>;
 }
 
 export type TimeOfDay = "morning" | "afternoon" | "evening";
-
