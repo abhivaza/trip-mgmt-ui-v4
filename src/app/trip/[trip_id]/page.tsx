@@ -66,45 +66,91 @@ export default function ItineraryPage() {
           description: "Failed to generate itinerary. Please try again.",
           variant: "destructive",
         });
-      } finally {
       }
     }
 
     fetchData();
-  }, [api, trip_id]);
+  }, [api, trip_id, toast]);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center">
         Your Trip to {itinerary?.city}, {itinerary?.country}
       </h1>
-      {
-        <Swiper
-          modules={[Pagination, Navigation]}
-          spaceBetween={30}
-          slidesPerView={isMobile ? 1 : "auto"}
-          pagination={{ clickable: true }}
-          navigation={!isMobile}
-          className="mySwiper block md:hidden"
-        >
-          {itinerary?.itinerary.map((day) => (
-            <SwiperSlide key={day.day}>
-              <Card className="w-full h-full">
-                <CardHeader>
-                  <CardTitle className="flex justify-between items-center">
-                    <span>
-                      Day {day.day}: {day.title}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {new Date().toLocaleDateString("en-US", {
-                        weekday: "long",
-                      })}
-                    </span>
-                  </CardTitle>
-                  <CardDescription>{day.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col md:flex-row gap-4">
-                  <div className="w-full md:w-2/3">
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="w-full md:w-2/3">
+          {isMobile && (
+            <Swiper
+              modules={[Pagination, Navigation]}
+              spaceBetween={30}
+              slidesPerView={1}
+              pagination={{ clickable: true }}
+              navigation
+              className="mySwiper mb-6"
+            >
+              {itinerary?.itinerary.map((day) => (
+                <SwiperSlide key={day.day}>
+                  <Card className="w-full h-full">
+                    <CardHeader>
+                      <CardTitle className="flex justify-between items-center">
+                        <span>
+                          Day {day.day}: {day.title}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {new Date().toLocaleDateString("en-US", {
+                            weekday: "long",
+                          })}
+                        </span>
+                      </CardTitle>
+                      <CardDescription>{day.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <h3 className="font-semibold mb-2">Activities:</h3>
+                      <div className="space-y-4">
+                        {["morning", "afternoon", "evening"].map(
+                          (timeOfDay) => (
+                            <div key={timeOfDay}>
+                              <h4 className="font-medium capitalize mb-2">
+                                {timeOfDay}
+                              </h4>
+                              <ul className="list-disc list-inside space-y-1">
+                                {day.activities[timeOfDay as TimeOfDay].map(
+                                  (activity, index) => (
+                                    <li key={index}>{activity}</li>
+                                  )
+                                )}
+                              </ul>
+                              {timeOfDay !== "evening" && (
+                                <Separator className="my-2" />
+                              )}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
+          <ScrollArea className="h-[calc(100vh-200px)] pr-4">
+            <div className="space-y-6">
+              {itinerary?.itinerary.map((day) => (
+                <Card key={day.day} className="w-full">
+                  <CardHeader>
+                    <CardTitle className="flex justify-between items-center">
+                      <span>
+                        Day {day.day}: {day.title}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {new Date().toLocaleDateString("en-US", {
+                          weekday: "long",
+                        })}
+                      </span>
+                    </CardTitle>
+                    <CardDescription>{day.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
                     <h3 className="font-semibold mb-2">Activities:</h3>
                     <div className="space-y-4">
                       {["morning", "afternoon", "evening"].map((timeOfDay) => (
@@ -125,78 +171,16 @@ export default function ItineraryPage() {
                         </div>
                       ))}
                     </div>
-                  </div>
-                  <div className="w-full md:w-1/3">
-                    {/* <Image
-                      src={day.image}
-                      alt={`Day ${day.day} highlight`}
-                      width={300}
-                      height={200}
-                      className="rounded-lg object-cover w-full h-48"
-                    /> */}
-                  </div>
-                </CardContent>
-              </Card>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      }
-
-      <ScrollArea className="h-[calc(100vh-200px)] pr-4">
-        <div className="space-y-6">
-          {itinerary?.itinerary.map((day) => (
-            <Card key={day.day} className="w-full">
-              <CardHeader>
-                <CardTitle className="flex justify-between items-center">
-                  <span>
-                    Day {day.day}: {day.title}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {new Date().toLocaleDateString("en-US", {
-                      weekday: "long",
-                    })}
-                  </span>
-                </CardTitle>
-                <CardDescription>{day.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col md:flex-row gap-4">
-                <div className="w-full md:w-2/3">
-                  <h3 className="font-semibold mb-2">Activities:</h3>
-                  <div className="space-y-4">
-                    {["morning", "afternoon", "evening"].map((timeOfDay) => (
-                      <div key={timeOfDay}>
-                        <h4 className="font-medium capitalize mb-2">
-                          {timeOfDay}
-                        </h4>
-                        <ul className="list-disc list-inside space-y-1">
-                          {day.activities[timeOfDay as TimeOfDay].map(
-                            (activity, index) => (
-                              <li key={index}>{activity}</li>
-                            )
-                          )}
-                        </ul>
-                        {timeOfDay !== "evening" && (
-                          <Separator className="my-2" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {/* <div className="w-full md:w-1/3">
-                  <Image
-                    src={day.image}
-                    alt={`Day ${day.day} highlight`}
-                    width={300}
-                    height={200}
-                    className="rounded-lg object-cover w-full h-48"
-                  />
-                </div> */}
-              </CardContent>
-            </Card>
-          ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
-      </ScrollArea>
-      <ChatbotSection />
+        <div className="w-full md:w-1/3">
+          <ChatbotSection />
+        </div>
+      </div>
     </div>
   );
 }

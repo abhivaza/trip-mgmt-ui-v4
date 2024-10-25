@@ -63,7 +63,7 @@ export function ChatbotSection() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-8">
+    <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle>Trip Assistant</CardTitle>
       </CardHeader>
