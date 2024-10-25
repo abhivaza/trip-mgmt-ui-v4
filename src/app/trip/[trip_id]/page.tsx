@@ -17,6 +17,7 @@ import { ItineraryResponse, TimeOfDay } from "@/types/itinerary";
 import { useParams } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
+import { ChatbotSection } from "@/components/chatbot";
 
 export default function ItineraryPage() {
   const [isMobile, setIsMobile] = useState(false);
@@ -195,6 +196,7 @@ export default function ItineraryPage() {
           ))}
         </div>
       </ScrollArea>
+      <ChatbotSection />
     </div>
   );
 }
