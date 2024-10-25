@@ -112,12 +112,18 @@ export default function Home() {
           destination: destination,
         });
 
-        if (itineraryData?.itinerary?.length == 0) {
+        if (
+          itineraryData?.itinerary?.length == 0 ||
+          itineraryData.message != "SUCCESS"
+        ) {
+
           toast({
             title: "Error",
             description: "Invalid destination. Please try again.",
             variant: "destructive",
           });
+        } else {
+          router.push(`/trip/${itineraryData?.tripId}`);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -129,9 +135,6 @@ export default function Home() {
       } finally {
         setIsLoading(false);
       }
-
-      if (itineraryData) router.push(`/trip/${itineraryData?.tripId}`);
-      else return;
     }
 
     fetchData();
