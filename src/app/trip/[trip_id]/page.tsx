@@ -171,7 +171,6 @@ export default function ItineraryPage() {
                         </div>
                       ))}
                     </div>
-
                   </CardContent>
                 </Card>
               ))}
