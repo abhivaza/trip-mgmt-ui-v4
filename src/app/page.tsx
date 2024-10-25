@@ -116,6 +116,7 @@ export default function Home() {
           itineraryData?.itinerary?.length == 0 ||
           itineraryData.message != "SUCCESS"
         ) {
+
           toast({
             title: "Error",
             description: "Invalid destination. Please try again.",

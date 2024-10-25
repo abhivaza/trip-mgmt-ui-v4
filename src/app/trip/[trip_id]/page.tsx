@@ -19,6 +19,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import { ChatbotSection } from "@/components/chatbot";
 
+
 export default function ItineraryPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [itinerary, setItinerary] = useState<ItineraryResponse>();
@@ -151,6 +152,7 @@ export default function ItineraryPage() {
                     <CardDescription>{day.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
+
                     <h3 className="font-semibold mb-2">Activities:</h3>
                     <div className="space-y-4">
                       {["morning", "afternoon", "evening"].map((timeOfDay) => (
@@ -171,6 +173,7 @@ export default function ItineraryPage() {
                         </div>
                       ))}
                     </div>
+
                   </CardContent>
                 </Card>
               ))}
@@ -181,6 +184,7 @@ export default function ItineraryPage() {
           <ChatbotSection />
         </div>
       </div>
+
     </div>
   );
 }
