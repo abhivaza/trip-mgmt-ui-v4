@@ -64,7 +64,7 @@ export function ChatbotSection() {
 
     try {
       const response = await api.post<{ question: string }, { answer: string }>(
-        `/trip/${trip_id}/chat`,
+        `/app/trip/${trip_id}/chat`,
         {
           question: input,
         }

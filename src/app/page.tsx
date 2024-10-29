@@ -108,7 +108,7 @@ export default function Home() {
         itineraryData = await api.post<
           { destination: string },
           ItineraryResponse
-        >("/trip/generate", {
+        >("/app/trip/generate", {
           destination: destination,
         });
 

@@ -63,7 +63,7 @@ export default function ItineraryPage() {
     async function fetchData() {
       try {
         const itineraryData = await api.get<ItineraryResponse>(
-          `/trip/${trip_id}`
+          `/app/trip/${trip_id}`
         );
 
         if (itineraryData?.itinerary?.length === 0) {
