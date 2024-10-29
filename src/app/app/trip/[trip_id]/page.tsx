@@ -166,7 +166,7 @@ export default function ItineraryPage() {
           )}
         </div>
         <div className={`${isMobile ? "mt-6" : "w-2/5 min-w-[300px]"}`}>
-          <ChatbotSection />
+          <ChatbotSection chatInitType="trip-specific" />
         </div>
       </div>
     </div>

@@ -23,7 +23,17 @@ type Message = {
   timestamp: Date;
 };
 
-export function ChatbotSection() {
+type ChatInitType = "general" | "trip-specific" | "custom";
+
+interface ChatbotSectionProps {
+  chatInitType: ChatInitType;
+  customInitMessage?: string;
+}
+
+export function ChatbotSection({
+  chatInitType,
+  customInitMessage = "",
+}: ChatbotSectionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +48,10 @@ export function ChatbotSection() {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    initializeChat();
+  }, []);
+
   const scrollToBottom = () => {
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector(
@@ -47,6 +61,29 @@ export function ChatbotSection() {
         scrollContainer.scrollTop = scrollContainer.scrollHeight;
       }
     }
+  };
+
+  const initializeChat = async () => {
+    let initMessage = "";
+    switch (chatInitType) {
+      case "general":
+        initMessage =
+          "Hello! How can I assist you with your travel plans today?";
+        break;
+      case "trip-specific":
+        initMessage = `Welcome! I'm here to help with your current trip. What would you like to know?`;
+        break;
+      case "custom":
+        initMessage = customInitMessage;
+        break;
+    }
+
+    const assistantMessage: Message = {
+      role: "assistant",
+      content: initMessage,
+      timestamp: new Date(),
+    };
+    setMessages([assistantMessage]);
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -64,7 +101,9 @@ export function ChatbotSection() {
 
     try {
       const response = await api.post<{ question: string }, { answer: string }>(
-        `/app/trip/${trip_id}/chat`,
+        chatInitType === "trip-specific"
+          ? `/app/trip/${trip_id}/chat`
+          : `/app/trips/chat`,
         {
           question: input,
         }
@@ -90,9 +129,11 @@ export function ChatbotSection() {
 
   const clearChat = () => {
     setMessages([]);
+    initializeChat();
     toast({
       title: "Chat Cleared",
-      description: "All messages have been removed.",
+      description:
+        "All messages have been removed and the chat has been reinitialized.",
     });
   };
 

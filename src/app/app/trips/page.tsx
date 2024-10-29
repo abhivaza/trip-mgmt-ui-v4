@@ -13,17 +13,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-
-interface Trip {
-  tripId: string;
-  city: string;
-  country: string;
-  startDate: string;
-  endDate: string;
-}
+import { ItineraryResponse } from "@/types/itinerary";
 
 export default function TripsPage() {
-  const [trips, setTrips] = useState<Trip[]>([]);
+  const [trips, setTrips] = useState<ItineraryResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
@@ -48,7 +41,7 @@ export default function TripsPage() {
     async function fetchTrips() {
       try {
         setIsLoading(true);
-        const tripsData = await api.get<Trip[]>("/app/trips");
+        const tripsData = await api.get<ItineraryResponse[]>("/app/trips");
         setTrips(tripsData);
       } catch (error) {
         console.error("Error fetching trips:", error);
@@ -66,10 +59,10 @@ export default function TripsPage() {
   }, [api, router, toast, user]);
 
   const handleViewTrip = (tripId: string) => {
-    router.push(`/trip/${tripId}`);
+    router.push(`/app/trip/${tripId}`);
   };
 
-  const TripCard = ({ trip }: { trip: Trip }) => (
+  const TripCard = ({ trip }: { trip: ItineraryResponse }) => (
     <Card className="hover:shadow-lg transition-shadow h-full">
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
@@ -88,7 +81,7 @@ export default function TripsPage() {
           {new Date(trip.startDate).toLocaleDateString()} -{" "}
           {new Date(trip.endDate).toLocaleDateString()}
         </div>
-        <Button onClick={() => handleViewTrip(trip.tripId)} className="w-full">
+        <Button onClick={() => handleViewTrip(trip.id)} className="w-full">
           View Trip <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </CardContent>
@@ -119,7 +112,7 @@ export default function TripsPage() {
               style={{ height: "400px" }}
             >
               {trips.map((trip) => (
-                <SwiperSlide key={trip.tripId}>
+                <SwiperSlide key={trip.id}>
                   <TripCard trip={trip} />
                 </SwiperSlide>
               ))}
@@ -127,13 +120,13 @@ export default function TripsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {trips.map((trip) => (
-                <TripCard key={trip.tripId} trip={trip} />
+                <TripCard key={trip.id} trip={trip} />
               ))}
             </div>
           )}
         </div>
         <div className={`${isMobile ? "mt-6" : "w-2/5 min-w-[300px]"}`}>
-          <ChatbotSection />
+          <ChatbotSection chatInitType="general" />
         </div>
       </div>
     </div>

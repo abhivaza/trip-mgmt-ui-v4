@@ -53,22 +53,24 @@ export default function Header() {
               >
                 Explore trips
               </Link>
-              <Link
-                href="#beta"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Try out the beta
-              </Link>
             </nav>
             {user ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="hidden md:flex items-center"
-                onClick={signOut}
-              >
-                <LogIn className="mr-2 h-4 w-4" /> Logout
-              </Button>
+              <>
+                <Link
+                  href="/app/trips"
+                  className="text-sm font-medium hover:text-primary transition-colors"
+                >
+                  My Trips
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden md:flex items-center"
+                  onClick={signOut}
+                >
+                  <LogIn className="mr-2 h-4 w-4" /> Logout
+                </Button>
+              </>
             ) : (
               <Button
                 variant="outline"
@@ -103,21 +105,24 @@ export default function Header() {
             >
               Explore trips
             </Link>
-            <Link
-              href="#beta"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Try out the beta
-            </Link>
+
             {user ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center w-full justify-center"
-                onClick={signOut}
-              >
-                <LogIn className="mr-2 h-4 w-4" /> Logout
-              </Button>
+              <>
+                <Link
+                  href="/app/trips"
+                  className="text-sm font-medium hover:text-primary transition-colors"
+                >
+                  My Trips
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center w-full justify-center"
+                  onClick={signOut}
+                >
+                  <LogIn className="mr-2 h-4 w-4" /> Logout
+                </Button>
+              </>
             ) : (
               <Button
                 variant="outline"

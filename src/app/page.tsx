@@ -122,7 +122,7 @@ export default function Home() {
             variant: "destructive",
           });
         } else {
-          router.push(`/trip/${itineraryData?.tripId}`);
+          router.push(`/app/trip/${itineraryData?.tripId}`);
         }
       } catch (error) {
         console.error("Error:", error);
