@@ -122,7 +122,7 @@ export default function Home() {
             variant: "destructive",
           });
         } else {
-          router.push(`/app/trip/${itineraryData?.tripId}`);
+          router.push(`/app/trip/${itineraryData?.id}`);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -248,12 +248,12 @@ export default function Home() {
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
-            <div className="text-sm text-gray-500">tripminder.app</div>
+            <div className="text-sm text-gray-500">TripMinder</div>
             <div className="w-4"></div>
           </div>
           <Image
             src="/images/paris.png?height=600&width=800"
-            alt="tripminder.app App Interface"
+            alt="TripMinder App Interface"
             width={800}
             height={600}
             className="w-full h-auto"

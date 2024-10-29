@@ -6,7 +6,7 @@ import { AppProvider } from "@/providers/app-provider";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "Travel Minder",
+  title: "Trip Minder",
   description: "AI assistant for planning your next trip.",
   // Basic metadata
   keywords: ["travel", "AI assistant", "trip planning", "vacation"],
@@ -16,16 +16,16 @@ export const metadata: Metadata = {
 
   // Open Graph metadata for social sharing
   openGraph: {
-    title: "Travel Minder",
+    title: "Trip Minder",
     description: "AI assistant for planning your next trip.",
     url: "https://your-domain.com",
-    siteName: "Travel Minder",
+    siteName: "Trip Minder",
     images: [
       {
         url: "https://your-domain.com/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Travel Minder - AI Travel Assistant",
+        alt: "Trip Minder - AI Travel Assistant",
       },
     ],
     locale: "en_US",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   // Twitter metadata
   twitter: {
     card: "summary_large_image",
-    title: "Travel Minder",
+    title: "Trip Minder",
     description: "AI assistant for planning your next trip.",
     creator: "@yourhandle",
     images: ["https://your-domain.com/twitter-image.jpg"],
