@@ -15,7 +15,7 @@ import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
 import { useParams } from "next/navigation";
 import { Loader2, Send, Trash2, User, Bot } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 type Message = {
   role: "user" | "assistant";
@@ -33,10 +33,6 @@ export function ChatbotSection() {
   const { trip_id } = params;
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const MAX_CHAR_COUNT = 280;
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   useEffect(() => {
     scrollToBottom();
@@ -106,7 +102,7 @@ export function ChatbotSection() {
 
   return (
     <Card className="w-full max-w-md mx-auto">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle>Trip Assistant</CardTitle>
         <Button
           variant="outline"
