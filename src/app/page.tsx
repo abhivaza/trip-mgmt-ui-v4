@@ -116,7 +116,6 @@ export default function Home() {
           itineraryData?.itinerary?.length == 0 ||
           itineraryData.message != "SUCCESS"
         ) {
-
           toast({
             title: "Error",
             description: "Invalid destination. Please try again.",
@@ -249,12 +248,12 @@ export default function Home() {
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
-            <div className="text-sm text-gray-500">highlights.ai</div>
+            <div className="text-sm text-gray-500">tripminder.app</div>
             <div className="w-4"></div>
           </div>
           <Image
             src="/images/paris.png?height=600&width=800"
-            alt="Highlights.AI App Interface"
+            alt="tripminder.app App Interface"
             width={800}
             height={600}
             className="w-full h-auto"
