@@ -7,21 +7,17 @@ import { LogIn, Menu } from "lucide-react";
 import Link from "next/link";
 import CompanyLogo from "@/components/company-logo";
 import { useState } from "react";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useAuth } from "@/providers/auth-provider";
 import { auth } from "@/firebase";
+import LoginPopup from "./login-popup";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useAuth();
+  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
 
-  const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error(error);
-    }
+  const openLoginDialog = () => {
+    setIsLoginDialogOpen(true);
   };
 
   const signOut = async () => {
@@ -76,7 +72,7 @@ export default function Header() {
                 variant="outline"
                 size="sm"
                 className="hidden md:flex items-center"
-                onClick={signInWithGoogle}
+                onClick={openLoginDialog}
               >
                 <LogIn className="mr-2 h-4 w-4" /> Login
               </Button>
@@ -128,7 +124,7 @@ export default function Header() {
                 variant="outline"
                 size="sm"
                 className="flex items-center w-full justify-center"
-                onClick={signInWithGoogle}
+                onClick={openLoginDialog}
               >
                 <LogIn className="mr-2 h-4 w-4" /> Login
               </Button>
@@ -136,6 +132,10 @@ export default function Header() {
           </nav>
         )}
       </div>
+      <LoginPopup
+        isOpen={isLoginDialogOpen}
+        onClose={() => setIsLoginDialogOpen(false)}
+      />
     </header>
   );
 }
