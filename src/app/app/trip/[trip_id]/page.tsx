@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -34,7 +35,31 @@ interface ItineraryResponse {
   tags: string[];
   itinerary: ItineraryActivity[];
   tripId: string;
+  imageURL: string; // Add this line to include the image URL
 }
+
+const TripImage = ({
+  imageURL,
+  highlight,
+}: {
+  imageURL: string;
+  highlight: string;
+}) => (
+  <div className="relative w-full h-[300px] mb-8 rounded-lg overflow-hidden">
+    <Image
+      src={imageURL}
+      alt={`${highlight}`}
+      layout="fill"
+      objectFit="cover"
+      className="transition-transform duration-300 hover:scale-105"
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-start p-6">
+      <h2 className="text-white text-3xl font-bold drop-shadow-lg">
+        {highlight}
+      </h2>
+    </div>
+  </div>
+);
 
 export default function ItineraryPage() {
   const [isMobile, setIsMobile] = useState(false);
@@ -119,10 +144,15 @@ export default function ItineraryPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {itinerary && (
+        <div className="mb-8">
+          <TripImage
+            imageURL={itinerary.imageURL}
+            highlight={`Your Trip to ${itinerary?.city}, ${itinerary?.country}`}
+          />
+        </div>
+      )}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-4">
-          Your Trip to {itinerary?.city}, {itinerary?.country}
-        </h1>
         {itinerary?.popularityRank === 1 && (
           <div className="flex items-center justify-center gap-2 mb-4">
             <Trophy className="w-5 h-5 text-yellow-500" />
