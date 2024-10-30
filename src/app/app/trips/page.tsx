@@ -14,6 +14,7 @@ import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { ItineraryResponse } from "@/types/itinerary";
+import LoadingSpinner from "@/components/loading-spinner";
 
 export default function TripsPage() {
   const [trips, setTrips] = useState<ItineraryResponse[]>([]);
@@ -89,7 +90,11 @@ export default function TripsPage() {
   );
 
   if (isLoading) {
-    return <div className="text-center mt-8">Loading your trips...</div>;
+    return (
+      <div className="text-center mt-8">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
