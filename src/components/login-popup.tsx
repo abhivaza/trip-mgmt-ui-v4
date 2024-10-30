@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { useAuth } from "@/providers/auth-provider";
 import { auth } from "@/firebase";
 
 export default function LoginPopup({
