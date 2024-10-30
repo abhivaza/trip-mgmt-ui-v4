@@ -108,7 +108,7 @@ export default function Home() {
         itineraryData = await api.post<
           { destination: string },
           ItineraryResponse
-        >("/trip/generate", {
+        >("/app/trip/generate", {
           destination: destination,
         });
 
@@ -116,14 +116,13 @@ export default function Home() {
           itineraryData?.itinerary?.length == 0 ||
           itineraryData.message != "SUCCESS"
         ) {
-
           toast({
             title: "Error",
             description: "Invalid destination. Please try again.",
             variant: "destructive",
           });
         } else {
-          router.push(`/trip/${itineraryData?.tripId}`);
+          router.push(`/app/trip/${itineraryData?.id}`);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -249,12 +248,12 @@ export default function Home() {
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
-            <div className="text-sm text-gray-500">highlights.ai</div>
+            <div className="text-sm text-gray-500">TripMinder</div>
             <div className="w-4"></div>
           </div>
           <Image
             src="/images/paris.png?height=600&width=800"
-            alt="Highlights.AI App Interface"
+            alt="TripMinder App Interface"
             width={800}
             height={600}
             className="w-full h-auto"

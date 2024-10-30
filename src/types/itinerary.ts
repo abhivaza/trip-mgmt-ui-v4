@@ -1,15 +1,5 @@
-export interface Itinerary {
-  day: number; // The day number in the itinerary.
-  title: string; // The title of the day's activities.
-  description: string; // A brief description of the day's overall plan.
-  activities: {
-    morning: string[]; // Activities scheduled for the morning.
-    afternoon: string[]; // Activities scheduled for the afternoon.
-    evening: string[]; // Activities scheduled for the evening.
-  };
-}
 export interface ItineraryResponse {
-  tripId: string;
+  id: string;
   message: string;
   city: string;
   country: string;
@@ -19,12 +9,9 @@ export interface ItineraryResponse {
     day: number;
     title: string;
     description: string;
-    activities: {
-      morning: string[];
-      afternoon: string[];
-      evening: string[];
-    };
+    activities: string[];
   }>;
+  createdBy: string;
+  startDate: string;
+  endDate: string;
 }
-
-export type TimeOfDay = "morning" | "afternoon" | "evening";

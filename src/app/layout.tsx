@@ -6,7 +6,7 @@ import { AppProvider } from "@/providers/app-provider";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "Travel Minder",
+  title: "Trip Minder",
   description: "AI assistant for planning your next trip.",
 };
 
