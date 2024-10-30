@@ -8,6 +8,12 @@ import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
   title: "Trip Minder",
   description: "AI assistant for planning your next trip.",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 };
 
 export default function RootLayout({
