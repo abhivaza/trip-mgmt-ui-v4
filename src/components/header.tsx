@@ -7,9 +7,26 @@ import { LogIn, Menu } from "lucide-react";
 import Link from "next/link";
 import CompanyLogo from "@/components/company-logo";
 import { useState } from "react";
+import { useAuth } from "@/providers/auth-provider";
+import { auth } from "@/firebase";
+import LoginPopup from "./login-popup";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
+
+  const openLoginDialog = () => {
+    setIsLoginDialogOpen(true);
+  };
+
+  const signOut = async () => {
+    try {
+      await auth.signOut();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <header className="py-4 px-4 md:px-8 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
@@ -32,20 +49,34 @@ export default function Header() {
               >
                 Explore trips
               </Link>
-              <Link
-                href="#beta"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Try out the beta
-              </Link>
             </nav>
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden md:flex items-center"
-            >
-              <LogIn className="mr-2 h-4 w-4" /> Login
-            </Button>
+            {user ? (
+              <>
+                <Link
+                  href="/app/trips"
+                  className="text-sm font-medium hover:text-primary transition-colors"
+                >
+                  My Trips
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden md:flex items-center"
+                  onClick={signOut}
+                >
+                  <LogIn className="mr-2 h-4 w-4" /> Logout
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden md:flex items-center"
+                onClick={openLoginDialog}
+              >
+                <LogIn className="mr-2 h-4 w-4" /> Login
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -70,22 +101,41 @@ export default function Header() {
             >
               Explore trips
             </Link>
-            <Link
-              href="#beta"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Try out the beta
-            </Link>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center w-full justify-center"
-            >
-              <LogIn className="mr-2 h-4 w-4" /> Login
-            </Button>
+
+            {user ? (
+              <>
+                <Link
+                  href="/app/trips"
+                  className="text-sm font-medium hover:text-primary transition-colors"
+                >
+                  My Trips
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center w-full justify-center"
+                  onClick={signOut}
+                >
+                  <LogIn className="mr-2 h-4 w-4" /> Logout
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center w-full justify-center"
+                onClick={openLoginDialog}
+              >
+                <LogIn className="mr-2 h-4 w-4" /> Login
+              </Button>
+            )}
           </nav>
         )}
       </div>
+      <LoginPopup
+        isOpen={isLoginDialogOpen}
+        onClose={() => setIsLoginDialogOpen(false)}
+      />
     </header>
   );
 }

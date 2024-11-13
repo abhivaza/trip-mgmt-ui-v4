@@ -11,7 +11,7 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4">About Us</h4>
             <p className="text-sm text-gray-600">
-              Highlights.AI is revolutionizing travel planning with AI-powered
+              TripMinder is revolutionizing travel planning with AI-powered
               itineraries tailored to your preferences.
             </p>
           </div>
@@ -113,7 +113,7 @@ export default function Footer() {
         </div>
         <div className="mt-8 pt-8  border-t border-gray-200 text-center">
           <p className="text-sm text-gray-600">
-            © {new Date().getFullYear()} Highlights.AI. All rights reserved.
+            © {new Date().getFullYear()} TripMinder All rights reserved.
           </p>
         </div>
       </div>
