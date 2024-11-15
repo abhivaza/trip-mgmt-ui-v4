@@ -152,7 +152,7 @@ export default function Home() {
         <div className="flex items-center bg-white rounded-lg shadow-md">
           <Input
             type="text"
-            placeholder="Vineyard tour in South of France"
+            placeholder="5 days tour of New York city."
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
             className="flex-grow border-none focus:ring-0"
