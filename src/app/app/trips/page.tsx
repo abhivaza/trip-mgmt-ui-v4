@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
@@ -15,6 +13,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { ItineraryResponse } from "@/types/itinerary";
 import LoadingSpinner from "@/components/loading-spinner";
+import { TripCard } from "@/components/trip-card";
 
 export default function TripsPage() {
   const [trips, setTrips] = useState<ItineraryResponse[]>([]);
@@ -59,35 +58,15 @@ export default function TripsPage() {
     fetchTrips();
   }, [api, router, toast, user]);
 
-  const handleViewTrip = (tripId: string) => {
-    router.push(`/app/trip/${tripId}`);
+  const handleEditTrip = (tripId: string) => {
+    // Implement edit functionality
+    console.log(`Editing trip ${tripId}`);
   };
 
-  const TripCard = ({ trip }: { trip: ItineraryResponse }) => (
-    <Card className="hover:shadow-lg transition-shadow h-full">
-      <CardHeader>
-        <CardTitle className="flex justify-between items-center">
-          <span>
-            {trip.city}, {trip.country}
-          </span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center text-sm text-gray-500 mb-2">
-          <MapPin className="mr-2 h-4 w-4" />
-          {trip.city}, {trip.country}
-        </div>
-        <div className="flex items-center text-sm text-gray-500 mb-4">
-          <Calendar className="mr-2 h-4 w-4" />
-          {new Date(trip.startDate).toLocaleDateString()} -{" "}
-          {new Date(trip.endDate).toLocaleDateString()}
-        </div>
-        <Button onClick={() => handleViewTrip(trip.id)} className="w-full">
-          View Trip <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-      </CardContent>
-    </Card>
-  );
+  const handleDeleteTrip = (tripId: string) => {
+    // Implement delete functionality
+    console.log(`Deleting trip ${tripId}`);
+  };
 
   if (isLoading) {
     return (
@@ -100,8 +79,8 @@ export default function TripsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center">Your Trips</h1>
-      <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-6`}>
-        <div className={`w-full ${!isMobile && "pr-6"}`}>
+      <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-8`}>
+        <div className={`w-full ${!isMobile && "pr-8"}`}>
           {trips.length === 0 ? (
             <div className="text-center">
               <p className="mb-4">You haven&apos;t created any trips yet.</p>
@@ -113,24 +92,33 @@ export default function TripsPage() {
               spaceBetween={30}
               slidesPerView={1}
               pagination={{ clickable: true }}
-              className="mySwiper mb-6"
+              className="mySwiper mb-8"
               style={{ height: "400px" }}
             >
               {trips.map((trip) => (
                 <SwiperSlide key={trip.id}>
-                  <TripCard trip={trip} />
+                  <TripCard
+                    trip={trip}
+                    onEdit={handleEditTrip}
+                    onDelete={handleDeleteTrip}
+                  />
                 </SwiperSlide>
               ))}
             </Swiper>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {trips.map((trip) => (
-                <TripCard key={trip.id} trip={trip} />
+                <TripCard
+                  key={trip.id}
+                  trip={trip}
+                  onEdit={handleEditTrip}
+                  onDelete={handleDeleteTrip}
+                />
               ))}
             </div>
           )}
         </div>
-        <div className={`${isMobile ? "mt-6" : "w-2/5 min-w-[300px]"}`}>
+        <div className={`${isMobile ? "mt-8" : "w-2/5 min-w-[300px]"}`}>
           <ChatbotSection chatInitType="general" />
         </div>
       </div>

@@ -1,14 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useEmblaCarousel from "embla-carousel-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
-  MapPin,
-  Calendar,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
@@ -22,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
 import { ItineraryResponse } from "@/types/itinerary";
 import { useApi } from "@/providers/api-provider";
+import { TripCard } from "@/components/trip-card";
 
 export default function Home() {
   const [destination, setDestination] = useState("");
@@ -40,48 +38,11 @@ export default function Home() {
   }, [emblaApi]);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [trips, setTrips] = useState<ItineraryResponse[]>([]);
+
   const { toast } = useToast();
   const { user } = useAuth();
   const api = useApi();
-
-  const popularDestinations = [
-    {
-      name: "Kiwi Paradise in New Zealand",
-      location: "New Zealand",
-      duration: "8 days",
-      image: "/images/paris.png?height=200&width=300",
-    },
-    {
-      name: "Renaissance Expedition in Italy",
-      location: "Italy",
-      duration: "5 days",
-      image: "/images/paris.png?height=200&width=300",
-    },
-    {
-      name: "Cherry Blossoms and Temples in Japan",
-      location: "Japan",
-      duration: "6 days",
-      image: "/images/paris.png?height=200&width=300",
-    },
-    {
-      name: "Canadian Northern Lights Adventure",
-      location: "Canada",
-      duration: "12 days",
-      image: "/images/paris.png?height=200&width=300",
-    },
-    {
-      name: "Sahara Desert Expedition",
-      location: "Morocco",
-      duration: "7 days",
-      image: "/images/paris.png?height=200&width=300",
-    },
-    {
-      name: "Amazon Rainforest Adventure",
-      location: "Brazil",
-      duration: "10 days",
-      image: "/images/paris.png?height=200&width=300",
-    },
-  ];
 
   const handleGenerateItinerary = async () => {
     if (!user) {
@@ -139,6 +100,25 @@ export default function Home() {
     fetchData();
   };
 
+  useEffect(() => {
+    async function fetchTrips() {
+      try {
+        const tripsData = await api.get<ItineraryResponse[]>("/public/trips");
+        setTrips(tripsData);
+      } catch (error) {
+        console.error("Error fetching trips:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch trips. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+      }
+    }
+
+    fetchTrips();
+  }, [api, router, toast, user]);
+
   return (
     <main className="flex-grow p-4 md:p-8">
       <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center">
@@ -183,29 +163,12 @@ export default function Home() {
         </div>
         <div className="overflow-hidden" ref={emblaRef}>
           <div className="flex">
-            {popularDestinations.map((dest, index) => (
+            {trips.map((trip, index) => (
               <div
                 key={index}
                 className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] md:flex-[0_0_33.33%] lg:flex-[0_0_25%] pl-4 first:pl-0"
               >
-                <Card className="overflow-hidden">
-                  <Image
-                    src={dest.image}
-                    alt={dest.name}
-                    width={300}
-                    height={200}
-                    className="w-full h-40 object-cover"
-                  />
-                  <CardContent className="p-4">
-                    <h4 className="font-semibold mb-2">{dest.name}</h4>
-                    <div className="flex items-center text-sm text-gray-500 mb-1">
-                      <MapPin className="mr-1 h-4 w-4" /> {dest.location}
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Calendar className="mr-1 h-4 w-4" /> {dest.duration}
-                    </div>
-                  </CardContent>
-                </Card>
+                <TripCard key={trip.id} trip={trip} />
               </div>
             ))}
           </div>
@@ -242,7 +205,7 @@ export default function Home() {
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl mx-auto">
-          <div className="p-4 bg-gray-100 border-b flex justify-between items-center">
+          <div className="p-3 bg-gray-100 border-b flex justify-between items-center">
             <div className="flex space-x-2">
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -252,7 +215,7 @@ export default function Home() {
             <div className="w-4"></div>
           </div>
           <Image
-            src="/images/paris.png?height=600&width=800"
+            src="/images/site-promo.png?height=600&width=800"
             alt="TripMinder App Interface"
             width={800}
             height={600}
