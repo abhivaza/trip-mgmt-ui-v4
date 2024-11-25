@@ -58,10 +58,6 @@ export default function TripsPage() {
     fetchTrips();
   }, [api, router, toast, user]);
 
-  const handleViewTrip = (tripId: string) => {
-    router.push(`/app/trip/${tripId}`);
-  };
-
   const handleEditTrip = (tripId: string) => {
     // Implement edit functionality
     console.log(`Editing trip ${tripId}`);
