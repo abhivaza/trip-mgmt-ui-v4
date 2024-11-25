@@ -26,19 +26,16 @@ export default function LoadingSpinner({
             ease: "linear",
           }}
         >
-          {[...Array(3)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full border-2 border-transparent"
-              style={{
-                width: `${(i + 1) * 40}px`,
-                height: `${(i + 1) * 40}px`,
-                borderTopColor: `rgba(219, 39, 119, ${0.8 - i * 0.2})`,
-                borderRightColor: `rgba(124, 58, 237, ${0.8 - i * 0.2})`,
-                animation: `spin ${2 + i * 0.5}s linear infinite`,
-              }}
-            />
-          ))}
+          <div
+            className="absolute rounded-full border-2 border-transparent"
+            style={{
+              width: `80px`,
+              height: `80px`,
+              borderTopColor: `rgba(219, 39, 119, ${0.8 * 0.2})`,
+              borderRightColor: `rgba(124, 58, 237, ${0.8 * 0.2})`,
+              animation: `spin ${2 * 0.5}s linear infinite`,
+            }}
+          />
 
           {/* Center icon */}
           <div className="relative h-8 w-8 rounded-full bg-gradient-to-tr from-pink-500 to-purple-500 shadow-lg">

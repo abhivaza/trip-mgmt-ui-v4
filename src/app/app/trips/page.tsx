@@ -97,13 +97,12 @@ export default function TripsPage() {
               slidesPerView={1}
               pagination={{ clickable: true }}
               className="mySwiper mb-8"
-              style={{ height: "550px" }}
+              style={{ height: "400px" }}
             >
               {trips.map((trip) => (
                 <SwiperSlide key={trip.id}>
                   <TripCard
                     trip={trip}
-                    onView={handleViewTrip}
                     onEdit={handleEditTrip}
                     onDelete={handleDeleteTrip}
                   />
@@ -116,7 +115,6 @@ export default function TripsPage() {
                 <TripCard
                   key={trip.id}
                   trip={trip}
-                  onView={handleViewTrip}
                   onEdit={handleEditTrip}
                   onDelete={handleDeleteTrip}
                 />
