@@ -14,4 +14,5 @@ export interface ItineraryResponse {
   createdBy: string;
   startDate: string;
   endDate: string;
+  imageURL: string;
 }
