@@ -9,7 +9,7 @@ export default function LoadingSpinner({
 }) {
   return (
     <div
-      className="flex flex-col items-center justify-center gap-4 p-8"
+      className="flex flex-col items-center justify-center gap-4 p-8 h-[70vh]"
       role="status"
     >
       <div className="relative">
