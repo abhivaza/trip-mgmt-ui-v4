@@ -205,7 +205,7 @@ export default function Home() {
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl mx-auto">
-          <div className="p-4 bg-gray-100 border-b flex justify-between items-center">
+          <div className="p-3 bg-gray-100 border-b flex justify-between items-center">
             <div className="flex space-x-2">
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
