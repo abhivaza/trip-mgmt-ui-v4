@@ -215,7 +215,7 @@ export default function Home() {
             <div className="w-4"></div>
           </div>
           <Image
-            src="/images/paris.png?height=600&width=800"
+            src="/images/site-promo.png?height=600&width=800"
             alt="TripMinder App Interface"
             width={800}
             height={600}
