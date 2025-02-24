@@ -5,14 +5,17 @@ export interface ItineraryResponse {
   country: string;
   popularityRank: number;
   tags: string[];
-  itinerary: Array<{
-    day: number;
-    title: string;
-    description: string;
-    activities: string[];
-  }>;
+  itinerary: ItineraryDayActivity[];
   createdBy: string;
-  startDate: string;
-  endDate: string;
+  fromDate: string;
+  tripDuration: number;
   imageURL: string;
+}
+
+export interface ItineraryDayActivity {
+  activities: string[];
+  dayNumber: number;
+  date: string;
+  title: string;
+  description: string;
 }

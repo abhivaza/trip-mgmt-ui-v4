@@ -38,8 +38,12 @@ export function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
           </div>
           <div className="flex items-center text-sm text-gray-500">
             <Calendar className="mr-2 h-4 w-4" />
-            {new Date(trip.startDate).toLocaleDateString()} -{" "}
-            {new Date(trip.endDate).toLocaleDateString()}
+            {new Date(trip.fromDate).toLocaleDateString()} -{" "}
+            {new Date(
+              new Date(trip.fromDate).setDate(
+                new Date(trip.fromDate).getDate() + trip.tripDuration
+              )
+            ).toLocaleDateString()}
           </div>
         </CardContent>
       </Link>

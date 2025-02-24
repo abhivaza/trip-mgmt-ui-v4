@@ -19,24 +19,7 @@ import { Pagination } from "swiper/modules";
 import { ChatbotSection } from "@/components/chatbot";
 import "swiper/css";
 import "swiper/css/pagination";
-
-interface ItineraryActivity {
-  activities: string[];
-  day: number;
-  title: string;
-  description: string;
-}
-
-interface ItineraryResponse {
-  message: string;
-  city: string;
-  country: string;
-  popularityRank: number;
-  tags: string[];
-  itinerary: ItineraryActivity[];
-  tripId: string;
-  imageURL: string; // Add this line to include the image URL
-}
+import { ItineraryDayActivity, ItineraryResponse } from "@/types/itinerary";
 
 const TripImage = ({
   imageURL,
@@ -114,15 +97,15 @@ export default function ItineraryPage() {
     fetchData();
   }, [api, trip_id, toast]);
 
-  const DayCard = ({ day }: { day: ItineraryActivity }) => (
+  const DayCard = ({ day }: { day: ItineraryDayActivity }) => (
     <Card className="w-full h-full">
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
           <span>
-            Day {day.day}: {day.title}
+            Day {day.dayNumber}: {day.title}
           </span>
           <span className="text-sm text-muted-foreground">
-            {new Date().toLocaleDateString("en-US", {
+            {new Date(day.date).toLocaleDateString("en-US", {
               weekday: "long",
             })}
           </span>
@@ -182,7 +165,7 @@ export default function ItineraryPage() {
               style={{ height: "500px" }}
             >
               {itinerary?.itinerary.map((day) => (
-                <SwiperSlide key={day.day}>
+                <SwiperSlide key={day.dayNumber}>
                   <DayCard day={day} />
                 </SwiperSlide>
               ))}
@@ -190,7 +173,7 @@ export default function ItineraryPage() {
           ) : (
             <div className="flex flex-col gap-6">
               {itinerary?.itinerary.map((day) => (
-                <DayCard key={day.day} day={day} />
+                <DayCard key={day.dayNumber} day={day} />
               ))}
             </div>
           )}
