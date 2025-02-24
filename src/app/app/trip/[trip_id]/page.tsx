@@ -20,6 +20,7 @@ import { ChatbotSection } from "@/components/chatbot";
 import "swiper/css";
 import "swiper/css/pagination";
 import { ItineraryDayActivity, ItineraryResponse } from "@/types/itinerary";
+import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 
 const TripImage = ({
   imageURL,
@@ -77,7 +78,7 @@ export default function ItineraryPage() {
         if (itineraryData?.itinerary?.length === 0) {
           toast({
             title: "Error",
-            description: "Invalid destination. Please try again.",
+            description: "Invalid destination." + " " + TRY_AGAIN_TEXT,
             variant: "destructive",
           });
           return;
@@ -88,7 +89,7 @@ export default function ItineraryPage() {
         console.error("Error:", error);
         toast({
           title: "Error",
-          description: "Failed to generate itinerary. Please try again.",
+          description: "Failed to generate itinerary." + " " + TRY_AGAIN_TEXT,
           variant: "destructive",
         });
       }

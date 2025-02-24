@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
 import { useApi } from "@/providers/api-provider";
+import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 
 export const PopularDestinations = () => {
   const router = useRouter();
@@ -27,7 +28,7 @@ export const PopularDestinations = () => {
         console.error("Error fetching trips:", error);
         toast({
           title: "Error",
-          description: "Failed to fetch trips. Please try again.",
+          description: "Failed to fetch trips." + " " + TRY_AGAIN_TEXT,
           variant: "destructive",
         });
       } finally {

@@ -14,6 +14,7 @@ import "swiper/css/pagination";
 import { ItineraryResponse } from "@/types/itinerary";
 import LoadingSpinner from "@/components/loading-spinner";
 import { TripCard } from "@/components/trip-card";
+import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 
 export default function TripsPage() {
   const [trips, setTrips] = useState<ItineraryResponse[]>([]);
@@ -47,7 +48,7 @@ export default function TripsPage() {
         console.error("Error fetching trips:", error);
         toast({
           title: "Error",
-          description: "Failed to fetch trips. Please try again.",
+          description: "Failed to fetch trips." + " " + TRY_AGAIN_TEXT,
           variant: "destructive",
         });
       } finally {

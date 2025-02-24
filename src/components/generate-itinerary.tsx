@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
 import { useApi } from "@/providers/api-provider";
 import { ItineraryResponse } from "@/types/itinerary";
+import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 
 export const GenerateItinerary: React.FC = () => {
   const [destination, setDestination] = useState("");
@@ -50,7 +51,7 @@ export const GenerateItinerary: React.FC = () => {
       ) {
         toast({
           title: "Error",
-          description: "Invalid destination. Please try again.",
+          description: "Invalid destination." + " " + TRY_AGAIN_TEXT,
           variant: "destructive",
         });
       } else {
@@ -60,7 +61,7 @@ export const GenerateItinerary: React.FC = () => {
       console.error("Error:", error);
       toast({
         title: "Error",
-        description: "Failed to generate itinerary. Please try again.",
+        description: "Failed to generate itinerary." + " " + TRY_AGAIN_TEXT,
         variant: "destructive",
       });
     } finally {

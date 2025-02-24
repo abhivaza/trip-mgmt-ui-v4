@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useParams } from "next/navigation";
 import { Loader2, Send, Trash2, User, Bot } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 
 type Message = {
   role: "user" | "assistant";
@@ -119,8 +120,7 @@ export function ChatbotSection({
       console.error("Error:", error);
       toast({
         title: "Error",
-        description:
-          "Failed to get a response. Please check your network connection and try again.",
+        description: "Failed to get a response." + " " + TRY_AGAIN_TEXT,
         variant: "destructive",
       });
     } finally {
