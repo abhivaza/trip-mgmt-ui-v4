@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +46,19 @@ export function ChatbotSection({
   const { trip_id } = params;
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const MAX_CHAR_COUNT = 280;
+
+  // Sample questions based on chat type
+  const sampleQuestions =
+    chatInitType === "trip-specific"
+      ? [
+          "How is my day 2 looking?",
+          "Did I visit any historic attraction in this trip?",
+        ]
+      : [
+          "Are there any historic attractions I visited?",
+          "What cities I visited in Unites States?",
+          "What kid friendly places I visited during my trips?",
+        ];
 
   useEffect(() => {
     scrollToBottom();
@@ -142,6 +157,10 @@ export function ChatbotSection({
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
+  const handleSampleQuestionClick = (question: string) => {
+    setInput(question);
+  };
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -202,7 +221,7 @@ export function ChatbotSection({
           )}
         </ScrollArea>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col space-y-3">
         <form onSubmit={handleSendMessage} className="flex w-full gap-2">
           <div className="flex-1 relative">
             <Input
@@ -226,6 +245,25 @@ export function ChatbotSection({
             <Send className="h-4 w-4" />
           </Button>
         </form>
+
+        {/* Sample questions section */}
+        <div className="w-full">
+          <p className="text-xs text-muted-foreground mb-1">Try asking:</p>
+          <div className="flex flex-wrap gap-2">
+            {sampleQuestions.map((question, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                className="text-xs py-1 h-auto"
+                onClick={() => handleSampleQuestionClick(question)}
+                disabled={isLoading}
+              >
+                {question}
+              </Button>
+            ))}
+          </div>
+        </div>
       </CardFooter>
     </Card>
   );
