@@ -14,12 +14,11 @@ import { Trophy } from "lucide-react";
 import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
 import { useParams } from "next/navigation";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
 import { ChatbotSection } from "@/components/chatbot";
-import "swiper/css";
-import "swiper/css/pagination";
-import { ItineraryDayActivity, ItineraryResponse } from "@/types/itinerary";
+import type {
+  ItineraryDayActivity,
+  ItineraryResponse,
+} from "@/types/itinerary";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 
 const TripImage = ({
@@ -31,7 +30,7 @@ const TripImage = ({
 }) => (
   <div className="relative w-full h-[300px] mb-8 rounded-lg overflow-hidden">
     <Image
-      src={imageURL}
+      src={imageURL || "/placeholder.svg"}
       alt={`${highlight}`}
       layout="fill"
       objectFit="cover"
@@ -156,28 +155,11 @@ export default function ItineraryPage() {
 
       <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-6`}>
         <div className={`w-full ${!isMobile && "pr-6"}`}>
-          {isMobile ? (
-            <Swiper
-              modules={[Pagination]}
-              spaceBetween={30}
-              slidesPerView={1}
-              pagination={{ clickable: true }}
-              className="mySwiper mb-6"
-              style={{ height: "500px" }}
-            >
-              {itinerary?.itinerary.map((day) => (
-                <SwiperSlide key={day.dayNumber}>
-                  <DayCard day={day} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          ) : (
-            <div className="flex flex-col gap-6">
-              {itinerary?.itinerary.map((day) => (
-                <DayCard key={day.dayNumber} day={day} />
-              ))}
-            </div>
-          )}
+          <div className="flex flex-col gap-6">
+            {itinerary?.itinerary.map((day) => (
+              <DayCard key={day.dayNumber} day={day} />
+            ))}
+          </div>
         </div>
         <div className={`${isMobile ? "mt-6" : "w-2/5 min-w-[300px]"}`}>
           <ChatbotSection chatInitType="trip-specific" />

@@ -58,7 +58,7 @@ export default function Header() {
                 >
                   My Trips
                 </Link>
-                <span className="text-sm font-medium text-muted-foreground mr-2">
+                <span className="hidden md:flex text-sm font-medium text-muted-foreground mr-2">
                   Hi, {userName}
                 </span>
                 <Button

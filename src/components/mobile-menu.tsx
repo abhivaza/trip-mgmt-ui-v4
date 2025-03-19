@@ -27,6 +27,8 @@ export default function MobileMenu({
     setIsOpen(false);
   };
 
+  const userName = user?.displayName || user?.email?.split("@")[0] || "there";
+
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -36,23 +38,11 @@ export default function MobileMenu({
       </PopoverTrigger>
       <PopoverContent className="w-56 p-0 md:hidden" align="end">
         <div className="flex flex-col py-2">
-          <Link
-            href="#features"
-            className="px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
-            onClick={handleLinkClick}
-          >
-            Features
-          </Link>
-          <Link
-            href="#explore"
-            className="px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
-            onClick={handleLinkClick}
-          >
-            Explore trips
-          </Link>
-
           {user ? (
             <>
+              <div className="px-4 py-2 text-sm font-medium text-muted-foreground">
+                Hi, {userName}
+              </div>
               <Link
                 href="/app/trips"
                 className="px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
