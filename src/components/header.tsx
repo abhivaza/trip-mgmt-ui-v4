@@ -26,6 +26,8 @@ export default function Header() {
     }
   };
 
+  const userName = user?.displayName || user?.email?.split("@")[0] || "there";
+
   return (
     <header className="py-4 px-4 md:px-8 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
       <div className="container mx-auto">
@@ -56,6 +58,9 @@ export default function Header() {
                 >
                   My Trips
                 </Link>
+                <span className="text-sm font-medium text-muted-foreground mr-2">
+                  Hi, {userName}
+                </span>
                 <Button
                   variant="outline"
                   size="sm"
