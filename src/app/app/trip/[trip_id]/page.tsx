@@ -20,6 +20,7 @@ import type {
   ItineraryResponse,
 } from "@/types/itinerary";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
+import { ShareTrip } from "@/components/share-trip";
 
 const TripImage = ({
   imageURL,
@@ -27,22 +28,28 @@ const TripImage = ({
 }: {
   imageURL: string;
   highlight: string;
-}) => (
-  <div className="relative w-full h-[300px] mb-8 rounded-lg overflow-hidden">
-    <Image
-      src={imageURL || "/placeholder.svg"}
-      alt={`${highlight}`}
-      layout="fill"
-      objectFit="cover"
-      className="transition-transform duration-300 hover:scale-105"
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-start p-6">
-      <h2 className="text-white text-3xl font-bold drop-shadow-lg">
-        {highlight}
-      </h2>
+}) => {
+  const params: { trip_id: string } = useParams();
+  const { trip_id } = params;
+
+  return (
+    <div className="relative w-full h-[300px] mb-8 rounded-lg overflow-hidden">
+      <Image
+        src={imageURL || "/placeholder.svg"}
+        alt={`${highlight}`}
+        layout="fill"
+        objectFit="cover"
+        className="transition-transform duration-300 hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-between p-6">
+        <h2 className="text-white text-3xl font-bold drop-shadow-lg">
+          {highlight}
+        </h2>
+        <ShareTrip tripId={trip_id} className="absolute top-4 right-4" />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function ItineraryPage() {
   const [isMobile, setIsMobile] = useState(false);
@@ -135,6 +142,7 @@ export default function ItineraryPage() {
           />
         </div>
       )}
+
       <div className="text-center mb-8">
         {itinerary?.popularityRank === 1 && (
           <div className="flex items-center justify-center gap-2 mb-4">
