@@ -1,18 +1,16 @@
 "use client";
 
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { LogIn, Menu } from "lucide-react";
+import { LogIn } from "lucide-react";
 import Link from "next/link";
 import CompanyLogo from "@/components/company-logo";
 import { useState } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import { auth } from "@/firebase";
 import LoginPopup from "./login-popup";
+import MobileMenu from "@/components/mobile-menu";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useAuth();
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
 
@@ -54,7 +52,7 @@ export default function Header() {
               <>
                 <Link
                   href="/app/trips"
-                  className="text-sm font-medium hover:text-primary transition-colors"
+                  className="hidden md:flex text-sm font-medium hover:text-primary transition-colors"
                 >
                   My Trips
                 </Link>
@@ -77,60 +75,13 @@ export default function Header() {
                 <LogIn className="mr-2 h-4 w-4" /> Login
               </Button>
             )}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
+            <MobileMenu
+              user={user}
+              signOut={signOut}
+              openLoginDialog={openLoginDialog}
+            />
           </div>
         </div>
-        {isMenuOpen && (
-          <nav className="mt-4 flex flex-col space-y-2 md:hidden">
-            <Link
-              href="#features"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Features
-            </Link>
-            <Link
-              href="#explore"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Explore trips
-            </Link>
-
-            {user ? (
-              <>
-                <Link
-                  href="/app/trips"
-                  className="text-sm font-medium hover:text-primary transition-colors"
-                >
-                  My Trips
-                </Link>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center w-full justify-center"
-                  onClick={signOut}
-                >
-                  <LogIn className="mr-2 h-4 w-4" /> Logout
-                </Button>
-              </>
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center w-full justify-center"
-                onClick={openLoginDialog}
-              >
-                <LogIn className="mr-2 h-4 w-4" /> Login
-              </Button>
-            )}
-          </nav>
-        )}
       </div>
       <LoginPopup
         isOpen={isLoginDialogOpen}
