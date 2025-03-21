@@ -7,11 +7,7 @@ import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
 import { ChatbotSection } from "@/components/chatbot";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import { ItineraryResponse } from "@/types/itinerary";
+import type { ItineraryResponse } from "@/types/itinerary";
 import LoadingSpinner from "@/components/loading-spinner";
 import { TripCard } from "@/components/trip-card";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
@@ -87,27 +83,14 @@ export default function TripsPage() {
               <p className="mb-4">You haven&apos;t created any trips yet.</p>
               <Button onClick={() => router.push("/")}>Plan a New Trip</Button>
             </div>
-          ) : isMobile ? (
-            <Swiper
-              modules={[Pagination]}
-              spaceBetween={30}
-              slidesPerView={1}
-              pagination={{ clickable: true }}
-              className="mySwiper mb-8"
-              style={{ height: "400px" }}
-            >
-              {trips.map((trip) => (
-                <SwiperSlide key={trip.id}>
-                  <TripCard
-                    trip={trip}
-                    onEdit={handleEditTrip}
-                    onDelete={handleDeleteTrip}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div
+              className={
+                isMobile
+                  ? "flex flex-col gap-6"
+                  : "grid grid-cols-1 md:grid-cols-2 gap-8"
+              }
+            >
               {trips.map((trip) => (
                 <TripCard
                   key={trip.id}
