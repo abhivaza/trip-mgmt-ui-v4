@@ -28,9 +28,11 @@ import { Circle } from "lucide-react";
 export default function LoginPopup({
   isOpen,
   onClose,
+  enablePasswordAuth = false,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  enablePasswordAuth?: boolean;
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,6 +71,12 @@ export default function LoginPopup({
     setLoading(true);
 
     try {
+      if (!enablePasswordAuth) {
+        // If password auth is disabled, use magic link instead
+        await handleMagicLink();
+        return;
+      }
+
       if (isSignUp) {
         if (password !== confirmPassword) {
           throw new Error("Passwords do not match");
@@ -309,67 +317,66 @@ export default function LoginPopup({
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <Label htmlFor="password">Password</Label>
-                    {!isSignUp && (
+                {enablePasswordAuth && (
+                  <>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <Label htmlFor="password">Password</Label>
+                        {!isSignUp && (
+                          <button
+                            type="button"
+                            onClick={handlePasswordReset}
+                            className="text-xs text-primary hover:underline"
+                          >
+                            Forgot password?
+                          </button>
+                        )}
+                      </div>
+                      <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required={enablePasswordAuth}
+                      />
+                    </div>
+
+                    {isSignUp && (
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password">
+                          Confirm Password
+                        </Label>
+                        <Input
+                          id="confirm-password"
+                          type="password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          required={enablePasswordAuth}
+                        />
+                      </div>
+                    )}
+
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading
+                        ? "Processing..."
+                        : isSignUp
+                        ? "Sign Up"
+                        : "Sign In"}
+                    </Button>
+
+                    <div className="text-center">
                       <button
                         type="button"
-                        onClick={handlePasswordReset}
-                        className="text-xs text-primary hover:underline"
+                        onClick={() => setIsSignUp(!isSignUp)}
+                        className="text-sm text-primary hover:underline"
                       >
-                        Forgot password?
+                        {isSignUp
+                          ? "Already have an account? Sign In"
+                          : "Don't have an account? Sign Up"}
                       </button>
-                    )}
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-
-                {isSignUp && (
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input
-                      id="confirm-password"
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                    />
-                  </div>
+                    </div>
+                  </>
                 )}
-
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Processing..." : isSignUp ? "Sign Up" : "Sign In"}
-                </Button>
-
-                <div className="text-center">
-                  <button
-                    type="button"
-                    onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-sm text-primary hover:underline"
-                  >
-                    {isSignUp
-                      ? "Already have an account? Sign In"
-                      : "Don't have an account? Sign Up"}
-                  </button>
-                </div>
-
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                      Or
-                    </span>
-                  </div>
-                </div>
 
                 <Button
                   type="button"
