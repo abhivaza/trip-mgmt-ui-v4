@@ -9,18 +9,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useState } from "react";
+import { useAuth } from "@/providers/auth-provider";
 
 interface MobileMenuProps {
-  user: any;
   signOut: () => Promise<void>;
   openLoginDialog: () => void;
 }
 
 export default function MobileMenu({
-  user,
   signOut,
   openLoginDialog,
 }: MobileMenuProps) {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLinkClick = () => {

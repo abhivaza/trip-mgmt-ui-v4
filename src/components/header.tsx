@@ -80,11 +80,7 @@ export default function Header() {
                 <LogIn className="mr-2 h-4 w-4" /> Login
               </Button>
             )}
-            <MobileMenu
-              user={user}
-              signOut={signOut}
-              openLoginDialog={openLoginDialog}
-            />
+            <MobileMenu signOut={signOut} openLoginDialog={openLoginDialog} />
           </div>
         </div>
       </div>
