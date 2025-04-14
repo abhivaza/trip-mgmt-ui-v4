@@ -19,3 +19,13 @@ export interface ItineraryDayActivity {
   title: string;
   description: string;
 }
+
+export interface ThingsToDo {
+  sectionHeader: string;
+  activities: Activity[];
+}
+
+export interface Activity {
+  name: string;
+  description: string;
+}

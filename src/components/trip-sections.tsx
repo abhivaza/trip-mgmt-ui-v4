@@ -29,6 +29,7 @@ import { MarkdownEditor } from "./markdown-editor";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import { useApi } from "@/providers/api-provider";
+import { ThingsToDo } from "@/types/itinerary";
 
 type SectionType = {
   id: string;
@@ -140,14 +141,14 @@ export function TripSections({ tripId }: CustomSectionsProps) {
 
     try {
       // Call the API endpoint with the trip ID and section type
-      const response = await api.post<{ activity: string }, { data: string }>(
+      const response = await api.post<{ activity: string }, ThingsToDo>(
         `/app/trip/${tripId}/section/generate`,
         {
           activity: editingSection.title,
         }
       );
 
-      setEditContent(response.data || "");
+      setEditContent(response.activities[0].description || "");
       toast({
         title: "Content Generated",
         description: "AI has created content for your section.",
