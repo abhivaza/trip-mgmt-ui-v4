@@ -21,7 +21,7 @@ import type {
 } from "@/types/itinerary";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 import { ShareTrip } from "@/components/share-trip";
-import { CustomSections } from "@/components/custom-sections";
+import { TripSections } from "@/components/trip-sections";
 
 const TripImage = ({
   imageURL,
@@ -171,7 +171,7 @@ export default function ItineraryPage() {
           </div>
         </div>
         <div className={`${isMobile ? "mt-6" : "w-2/5 min-w-[300px]"}`}>
-          <CustomSections tripId={trip_id} />
+          <TripSections tripId={trip_id} />
           <ChatbotSection chatInitType="trip-specific" />
         </div>
       </div>
