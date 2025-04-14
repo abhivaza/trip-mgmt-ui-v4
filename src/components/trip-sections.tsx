@@ -28,6 +28,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MarkdownEditor } from "./markdown-editor";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
+import { useApi } from "@/providers/api-provider";
 
 type SectionType = {
   id: string;
@@ -92,6 +93,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
   const [editContent, setEditContent] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const api = useApi();
 
   const { toast } = useToast();
 
@@ -137,69 +139,15 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     setIsGenerating(true);
 
     try {
-      // This would be replaced with your actual AI generation API call
-      // For now, we'll simulate a delay and return some sample content
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Call the API endpoint with the trip ID and section type
+      const response = await api.post<{ activity: string }, { data: string }>(
+        `/app/trip/${tripId}/section/generate`,
+        {
+          activity: editingSection.title,
+        }
+      );
 
-      const sectionType = editingSection.title.toLowerCase();
-      let generatedContent = "";
-
-      if (sectionType.includes("hiking")) {
-        generatedContent = `## Recommended Hiking Trails
-
-1. **Mountain Vista Trail** - Moderate difficulty, 5.2 miles
-   - *Elevation gain:* 1,200 ft
-   - *Estimated time:* 3-4 hours
-   - *Highlights:* Panoramic views, wildlife sightings
-
-2. **Waterfall Loop** - Easy difficulty, 2.8 miles
-   - *Elevation gain:* 400 ft
-   - *Estimated time:* 1.5-2 hours
-   - *Highlights:* Three scenic waterfalls
-
-### Required Gear
-- Hiking boots with ankle support
-- At least 2L of water per person
-- Sun protection
-- Trail map (available at visitor center)`;
-      } else if (sectionType.includes("dining")) {
-        generatedContent = `## Local Restaurants
-
-### Must-Try Places
-1. **The Rustic Table** - Farm-to-table cuisine
-   - *Reservation recommended:* Yes
-   - *Price range:* $$-$$$
-   - *Specialty:* Seasonal harvest platter
-
-2. **Ocean Blue** - Fresh seafood
-   - *Reservation recommended:* Yes, especially weekends
-   - *Price range:* $$$
-   - *Specialty:* Grilled catch of the day
-
-### Local Delicacies
-- Don't miss trying the regional specialty stew
-- Visit the farmers market on Saturday mornings
-- Consider the food tour that runs on Thursdays`;
-      } else {
-        generatedContent = `## ${editingSection.title} Details
-
-### Recommendations
-1. **First Option** - Brief description here
-   - *Key detail:* Important information
-   - *Another detail:* More information
-
-2. **Second Option** - Another description
-   - *Key detail:* Important information
-   - *Another detail:* More information
-
-### Tips
-- Useful tip related to this section
-- Another helpful suggestion
-- Final recommendation`;
-      }
-
-      setEditContent(generatedContent);
-
+      setEditContent(response.data || "");
       toast({
         title: "Content Generated",
         description: "AI has created content for your section.",
@@ -210,6 +158,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
         description: "Unable to generate content. Please try again.",
         variant: "destructive",
       });
+      console.error("Error generating content:", error);
     } finally {
       setIsGenerating(false);
     }
