@@ -77,7 +77,7 @@ export default function TripsPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center">Your Trips</h1>
       <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-8`}>
-        <div className={`w-full ${!isMobile && "pr-8"}`}>
+        <div className={`w-full`}>
           {trips.length === 0 ? (
             <div className="text-center">
               <p className="mb-4">You haven&apos;t created any trips yet.</p>

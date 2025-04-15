@@ -162,7 +162,7 @@ export function ChatbotSection({
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full mx-auto">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle>Trip Assistant</CardTitle>
         <Button
