@@ -1,33 +1,48 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Image from "next/image"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Trophy } from "lucide-react"
-import { useApi } from "@/providers/api-provider"
-import { useToast } from "@/hooks/use-toast"
-import { useParams } from "next/navigation"
-import { ChatbotSection } from "@/components/chatbot"
-import type { ItineraryDayActivity, ItineraryResponse } from "@/types/itinerary"
-import { TRY_AGAIN_TEXT } from "@/lib/app-utils"
-import { ShareTrip } from "@/components/share-trip"
-import { TripSections } from "@/components/trip-sections"
-import { MarkdownEditor } from "@/components/markdown-editor"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Sparkles, Edit } from "lucide-react"
-import ReactMarkdown from "react-markdown"
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Trophy } from "lucide-react";
+import { useApi } from "@/providers/api-provider";
+import { useToast } from "@/hooks/use-toast";
+import { useParams } from "next/navigation";
+import { ChatbotSection } from "@/components/chatbot";
+import type {
+  ItineraryDayActivity,
+  ItineraryResponse,
+} from "@/types/itinerary";
+import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
+import { ShareTrip } from "@/components/share-trip";
+import { TripSections } from "@/components/trip-sections";
+import { MarkdownEditor } from "@/components/markdown-editor";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Sparkles, Edit } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 const TripImage = ({
   imageURL,
   highlight,
 }: {
-  imageURL: string
-  highlight: string
+  imageURL: string;
+  highlight: string;
 }) => {
-  const params: { trip_id: string } = useParams()
-  const { trip_id } = params
+  const params: { trip_id: string } = useParams();
+  const { trip_id } = params;
 
   return (
     <div className="relative w-full h-[300px] mb-8 rounded-lg overflow-hidden">
@@ -39,143 +54,153 @@ const TripImage = ({
         className="transition-transform duration-300 hover:scale-105"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-between p-6">
-        <h2 className="text-white text-3xl font-bold drop-shadow-lg">{highlight}</h2>
+        <h2 className="text-white text-3xl font-bold drop-shadow-lg">
+          {highlight}
+        </h2>
         <ShareTrip tripId={trip_id} className="absolute top-4 right-4" />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default function ItineraryPage() {
-  const [isMobile, setIsMobile] = useState(false)
-  const [itinerary, setItinerary] = useState<ItineraryResponse>()
+  const [isMobile, setIsMobile] = useState(false);
+  const [itinerary, setItinerary] = useState<ItineraryResponse>();
 
-  const params: { trip_id: string } = useParams()
-  const { trip_id } = params
+  const params: { trip_id: string } = useParams();
+  const { trip_id } = params;
 
-  const api = useApi()
-  const { toast } = useToast()
+  const api = useApi();
+  const { toast } = useToast();
 
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
+      setIsMobile(window.innerWidth < 768);
+    };
 
-    checkIfMobile()
-    window.addEventListener("resize", checkIfMobile)
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
 
     return () => {
-      window.removeEventListener("resize", checkIfMobile)
-    }
-  }, [])
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const itineraryData = await api.get<ItineraryResponse>(`/app/trip/${trip_id}`)
+        const itineraryData = await api.get<ItineraryResponse>(
+          `/app/trip/${trip_id}`
+        );
 
         if (itineraryData?.itinerary?.length === 0) {
           toast({
             title: "Error",
             description: "Invalid destination." + " " + TRY_AGAIN_TEXT,
             variant: "destructive",
-          })
-          return
+          });
+          return;
         }
 
-        setItinerary(itineraryData)
+        setItinerary(itineraryData);
       } catch (error) {
-        console.error("Error:", error)
+        console.error("Error:", error);
         toast({
           title: "Error",
           description: "Failed to generate itinerary." + " " + TRY_AGAIN_TEXT,
           variant: "destructive",
-        })
+        });
       }
     }
 
-    fetchData()
-  }, [api, trip_id, toast])
+    fetchData();
+  }, [api, trip_id, toast]);
 
   const DayCard = ({ day }: { day: ItineraryDayActivity }) => {
-    const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [editingSection, setEditingSection] = useState<ItineraryDayActivity | null>(null)
-    const [editName, setEditName] = useState<string>("")
-    const [editContent, setEditContent] = useState<string>("")
-    const [isGenerating, setIsGenerating] = useState<boolean>(false)
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [editingSection, setEditingSection] =
+      useState<ItineraryDayActivity | null>(null);
+    const [editName, setEditName] = useState<string>("");
+    const [editContent, setEditContent] = useState<string>("");
+    const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
     const handleEditActivity = (activity: ItineraryDayActivity) => {
-      setEditingSection(activity)
-      setEditName(activity.title)
-      setEditContent(activity.description)
-      setIsEditing(true)
-    }
+      setEditingSection(activity);
+      setEditName(activity.title);
+      setEditContent(activity.description);
+      setIsEditing(true);
+    };
 
     const saveEditedContent = async () => {
-      if (!editingSection) return
+      if (!editingSection) return;
 
       try {
         await api.put(`/app/trip/${trip_id}/day/${day.dayNumber}`, {
           title: editName,
           activitiesMarkdown: editContent,
-        })
+        });
 
         // Update local state
         const updatedDay = {
           ...day,
           title: editName,
           description: editContent,
-        }
+        };
 
         // You might need to update the itinerary state here
         // This is a simplified approach
         setItinerary((prev) => {
-          if (!prev) return prev
+          if (!prev) return prev;
           return {
             ...prev,
-            itinerary: prev.itinerary.map((d) => (d.dayNumber === day.dayNumber ? updatedDay : d)),
-          }
-        })
+            itinerary: prev.itinerary.map((d) =>
+              d.dayNumber === day.dayNumber ? updatedDay : d
+            ),
+          };
+        });
 
-        setIsEditing(false)
+        setIsEditing(false);
         toast({
           title: "Success",
           description: "Activities updated successfully",
-        })
+        });
       } catch (error) {
-        console.error("Error saving activities:", error)
+        console.error("Error saving activities:", error);
         toast({
           title: "Error",
           description: "Failed to save activities",
           variant: "destructive",
-        })
+        });
       }
-    }
+    };
 
     const generateAIContent = async () => {
-      setIsGenerating(true)
+      setIsGenerating(true);
       try {
         // Implement your AI content generation logic here
         // For example:
-        const response = await api.post(`/app/trip/${trip_id}/generate-activity`, {
-          dayNumber: day.dayNumber,
-          currentTitle: editName,
-        })
+        const response = await api.post(
+          `/app/trip/${trip_id}/generate-activity`,
+          {
+            dayNumber: day.dayNumber,
+            currentTitle: editName,
+          }
+        );
 
         if (response.content) {
-          setEditContent(response.content)
+          setEditContent(response.content);
         }
       } catch (error) {
-        console.error("Error generating content:", error)
+        console.error("Error generating content:", error);
         toast({
           title: "Error",
           description: "Failed to generate content with AI",
           variant: "destructive",
-        })
+        });
       } finally {
-        setIsGenerating(false)
+        setIsGenerating(false);
       }
-    }
+    };
 
     return (
       <Card className="w-full h-full">
@@ -190,6 +215,7 @@ export default function ItineraryPage() {
               })}
             </span>
           </CardTitle>
+          <CardDescription>Place: {day.place}</CardDescription>
           <CardDescription>{day.shortDescription}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -210,7 +236,10 @@ export default function ItineraryPage() {
           </div>
         </CardContent>
 
-        <Dialog open={isEditing} onOpenChange={(open) => !open && setIsEditing(false)}>
+        <Dialog
+          open={isEditing}
+          onOpenChange={(open) => !open && setIsEditing(false)}
+        >
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>{editingSection?.title} - Edit Activity</DialogTitle>
@@ -230,7 +259,9 @@ export default function ItineraryPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Activity Description</label>
+                <label className="text-sm font-medium">
+                  Activity Description
+                </label>
                 <MarkdownEditor value={editContent} onChange={setEditContent} />
               </div>
             </div>
@@ -255,8 +286,8 @@ export default function ItineraryPage() {
           </DialogContent>
         </Dialog>
       </Card>
-    )
-  }
+    );
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -273,7 +304,9 @@ export default function ItineraryPage() {
         {itinerary?.popularityRank === 1 && (
           <div className="flex items-center justify-center gap-2 mb-4">
             <Trophy className="w-5 h-5 text-yellow-500" />
-            <span className="text-sm text-muted-foreground">#1 Most Popular Destination</span>
+            <span className="text-sm text-muted-foreground">
+              #1 Most Popular Destination
+            </span>
           </div>
         )}
         <div className="flex flex-wrap gap-2 justify-center">
@@ -299,5 +332,5 @@ export default function ItineraryPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
