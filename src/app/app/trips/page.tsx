@@ -76,7 +76,7 @@ export default function TripsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center">Your Trips</h1>
-      <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-8`}>
+      <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-6`}>
         <div className={`w-full`}>
           {trips.length === 0 ? (
             <div className="text-center">
@@ -88,7 +88,7 @@ export default function TripsPage() {
               className={
                 isMobile
                   ? "flex flex-col gap-6"
-                  : "grid grid-cols-1 md:grid-cols-2 gap-8"
+                  : "grid grid-cols-1 md:grid-cols-2 gap-6"
               }
             >
               {trips.map((trip) => (
@@ -102,7 +102,7 @@ export default function TripsPage() {
             </div>
           )}
         </div>
-        <div className={`${isMobile ? "mt-8" : "w-2/5 min-w-[300px]"}`}>
+        <div className={`${isMobile ? "w-full" : "w-2/5 min-w-[300px]"}`}>
           <ChatbotSection chatInitType="general" />
         </div>
       </div>

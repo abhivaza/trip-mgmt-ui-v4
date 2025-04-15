@@ -170,7 +170,7 @@ export default function ItineraryPage() {
             ))}
           </div>
         </div>
-        <div className={`${isMobile ? "mt-6" : "w-4/5 min-w-[300px]"}`}>
+        <div className={`${isMobile ? "w-full" : "w-4/5 min-w-[300px]"}`}>
           <TripSections tripId={trip_id} />
           <ChatbotSection chatInitType="trip-specific" />
         </div>
