@@ -141,19 +141,61 @@ export function TripSections({ tripId }: CustomSectionsProps) {
   const { toast } = useToast();
 
   // Update the addSection function
-  const addSection = (template: (typeof SECTION_TEMPLATES)[0]) => {
-    setSections([
-      ...sections,
-      {
-        ...template,
-        id: `${template.id}-${Date.now()}`, // Ensure unique ID
-      },
-    ]);
+  const addSection = async (template: (typeof SECTION_TEMPLATES)[0]) => {
+    const newSection = {
+      ...template,
+      id: `${template.id}-${Date.now()}`, // Ensure unique ID
+    };
+
+    setSections([...sections, newSection]);
     setOpen(false);
+
+    // Generate AI content for the template section
+    try {
+      setIsGenerating(true);
+      const response = await api.post<{ activity: string }, ThingsToDo>(
+        `/app/trip/${tripId}/section/generate`,
+        {
+          activity: template.title,
+        }
+      );
+
+      if (response.activities && response.activities.length > 0) {
+        // Update the section with the generated activities
+        setSections((prevSections) =>
+          prevSections.map((section) => {
+            if (section.id === newSection.id) {
+              return {
+                ...section,
+                activities: response.activities.map((activity) => ({
+                  name: activity.name || "Activity",
+                  description: activity.description || "",
+                })),
+              };
+            }
+            return section;
+          })
+        );
+
+        toast({
+          title: "Content Generated",
+          description: "AI has created content for your new section.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Generation Failed",
+        description: "Unable to generate content. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Error generating content:", error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   // Add a function to create a custom section
-  const addCustomSection = () => {
+  const addCustomSection = async () => {
     if (!customSectionTitle.trim()) {
       toast({
         title: "Section Title Required",
@@ -163,23 +205,65 @@ export function TripSections({ tripId }: CustomSectionsProps) {
       return;
     }
 
-    setSections([
-      ...sections,
-      {
-        id: `custom-${Date.now()}`,
-        title: customSectionTitle,
-        icon: <Sparkles className="h-5 w-5" />,
-        activities: [
-          {
-            name: "New Activity",
-            description: "Add details for this activity.",
-          },
-        ],
-      },
-    ]);
+    const newSection = {
+      id: `custom-${Date.now()}`,
+      title: customSectionTitle,
+      icon: <Sparkles className="h-5 w-5" />,
+      activities: [
+        {
+          name: "New Activity",
+          description: "Add details for this activity.",
+        },
+      ],
+    };
+
+    setSections([...sections, newSection]);
     setCustomSectionTitle("");
     setIsCreatingCustom(false);
     setOpen(false);
+
+    // Generate AI content for the new section
+    try {
+      setIsGenerating(true);
+      const response = await api.post<{ activity: string }, ThingsToDo>(
+        `/app/trip/${tripId}/section/generate`,
+        {
+          activity: customSectionTitle,
+        }
+      );
+
+      if (response.activities && response.activities.length > 0) {
+        // Update the section with the generated activities
+        setSections((prevSections) =>
+          prevSections.map((section) => {
+            if (section.id === newSection.id) {
+              return {
+                ...section,
+                activities: response.activities.map((activity) => ({
+                  name: activity.name || "Activity",
+                  description: activity.description || "",
+                })),
+              };
+            }
+            return section;
+          })
+        );
+
+        toast({
+          title: "Content Generated",
+          description: "AI has created content for your new section.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Generation Failed",
+        description: "Unable to generate content. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Error generating content:", error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const removeSection = (id: string) => {
