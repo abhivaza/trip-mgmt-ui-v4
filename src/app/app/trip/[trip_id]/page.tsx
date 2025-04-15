@@ -21,6 +21,7 @@ import type {
 } from "@/types/itinerary";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 import { ShareTrip } from "@/components/share-trip";
+import { TripSections } from "@/components/trip-sections";
 
 const TripImage = ({
   imageURL,
@@ -162,14 +163,15 @@ export default function ItineraryPage() {
       </div>
 
       <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-6`}>
-        <div className={`w-full ${!isMobile && "pr-6"}`}>
+        <div className={`w-full`}>
           <div className="flex flex-col gap-6">
             {itinerary?.itinerary.map((day) => (
               <DayCard key={day.dayNumber} day={day} />
             ))}
           </div>
         </div>
-        <div className={`${isMobile ? "mt-6" : "w-2/5 min-w-[300px]"}`}>
+        <div className={`${isMobile ? "w-full" : "w-4/5 min-w-[300px]"}`}>
+          <TripSections tripId={trip_id} />
           <ChatbotSection chatInitType="trip-specific" />
         </div>
       </div>
