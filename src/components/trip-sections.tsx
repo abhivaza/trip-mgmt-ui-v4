@@ -42,7 +42,11 @@ interface Activity {
   description: string;
 }
 
-// Update the SECTION_TEMPLATES to include activities array
+interface CustomSectionsProps {
+  tripId: string;
+}
+
+// First, let's update the SECTION_TEMPLATES array to include a custom option
 const SECTION_TEMPLATES = [
   {
     id: "hiking",
@@ -117,14 +121,10 @@ const SECTION_TEMPLATES = [
   },
 ];
 
-interface CustomSectionsProps {
-  tripId: string;
-}
-
+// Now, let's add state for custom section creation
 export function TripSections({ tripId }: CustomSectionsProps) {
   const [sections, setSections] = useState<SectionType[]>([]);
   const [open, setOpen] = useState(false);
-  // Update the state variables
   const [editingSection, setEditingSection] = useState<SectionType | null>(
     null
   );
@@ -133,6 +133,9 @@ export function TripSections({ tripId }: CustomSectionsProps) {
   const [editName, setEditName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  // Add new state for custom section creation
+  const [customSectionTitle, setCustomSectionTitle] = useState("");
+  const [isCreatingCustom, setIsCreatingCustom] = useState(false);
   const api = useApi();
 
   const { toast } = useToast();
@@ -146,6 +149,36 @@ export function TripSections({ tripId }: CustomSectionsProps) {
         id: `${template.id}-${Date.now()}`, // Ensure unique ID
       },
     ]);
+    setOpen(false);
+  };
+
+  // Add a function to create a custom section
+  const addCustomSection = () => {
+    if (!customSectionTitle.trim()) {
+      toast({
+        title: "Section Title Required",
+        description: "Please enter a title for your custom section.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSections([
+      ...sections,
+      {
+        id: `custom-${Date.now()}`,
+        title: customSectionTitle,
+        icon: <Sparkles className="h-5 w-5" />,
+        activities: [
+          {
+            name: "New Activity",
+            description: "Add details for this activity.",
+          },
+        ],
+      },
+    ]);
+    setCustomSectionTitle("");
+    setIsCreatingCustom(false);
     setOpen(false);
   };
 
@@ -263,6 +296,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     );
   };
 
+  // Now, let's update the CardContent section to increase height and ensure proper scrolling
   return (
     <>
       <Card className="mb-6">
@@ -280,24 +314,63 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                 <DialogHeader>
                   <DialogTitle>Add Custom Section</DialogTitle>
                 </DialogHeader>
-                <div className="grid grid-cols-2 gap-4 py-4">
-                  {SECTION_TEMPLATES.map((template) => (
-                    <Button
-                      key={template.id}
-                      variant="outline"
-                      className="h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent"
-                      onClick={() => addSection(template)}
-                    >
-                      {template.icon}
-                      <span>{template.title}</span>
-                    </Button>
-                  ))}
-                </div>
+                {isCreatingCustom ? (
+                  <div className="py-4 space-y-4">
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="custom-section-title"
+                        className="text-sm font-medium"
+                      >
+                        Section Title
+                      </label>
+                      <input
+                        id="custom-section-title"
+                        className="w-full p-2 border rounded-md"
+                        value={customSectionTitle}
+                        onChange={(e) => setCustomSectionTitle(e.target.value)}
+                        placeholder="Enter section title..."
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsCreatingCustom(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={addCustomSection}>Create Section</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 gap-4 py-4">
+                      {SECTION_TEMPLATES.map((template) => (
+                        <Button
+                          key={template.id}
+                          variant="outline"
+                          className="h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent"
+                          onClick={() => addSection(template)}
+                        >
+                          {template.icon}
+                          <span>{template.title}</span>
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="flex justify-center mt-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsCreatingCustom(true)}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create Custom Section
+                      </Button>
+                    </div>
+                  </>
+                )}
               </DialogContent>
             </Dialog>
           </CardTitle>
         </CardHeader>
-        {/* Update the CardContent section to display activities */}
         <CardContent>
           {sections.length === 0 ? (
             <div className="text-center py-6 text-muted-foreground">
@@ -307,7 +380,8 @@ export function TripSections({ tripId }: CustomSectionsProps) {
               </p>
             </div>
           ) : (
-            <ScrollArea className="max-h-[300px]">
+            // Increase the max height of the ScrollArea to show more content
+            <ScrollArea className="max-h-[500px]">
               <div className="space-y-4">
                 {sections.map((section) => (
                   <div
