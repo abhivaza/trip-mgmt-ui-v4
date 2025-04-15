@@ -381,7 +381,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
             </div>
           ) : (
             // Increase the max height of the ScrollArea to show more content
-            <ScrollArea className="max-h-[500px]">
+            <ScrollArea className="h-[500px] pr-3">
               <div className="space-y-4">
                 {sections.map((section) => (
                   <div
