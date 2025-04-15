@@ -29,52 +29,91 @@ import { MarkdownEditor } from "./markdown-editor";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import { useApi } from "@/providers/api-provider";
-import { ThingsToDo } from "@/types/itinerary";
+import type { ThingsToDo } from "@/types/itinerary";
 
+// Update the SectionType to match the new structure
 type SectionType = ThingsToDo & {
   icon: React.ReactNode;
+  activities: Activity[];
 };
 
+interface Activity {
+  name: string;
+  description: string;
+}
+
+// Update the SECTION_TEMPLATES to include activities array
 const SECTION_TEMPLATES = [
   {
     id: "hiking",
     title: "Hiking Plan",
     icon: <Hiking className="h-5 w-5" />,
-    content:
-      "Add details about hiking trails, difficulty levels, and required gear.",
+    activities: [
+      {
+        name: "Hiking Trails",
+        description:
+          "Add details about hiking trails, difficulty levels, and required gear.",
+      },
+    ],
   },
   {
     id: "dining",
     title: "Dining Plan",
     icon: <Utensils className="h-5 w-5" />,
-    content:
-      "List restaurants to visit, local cuisines to try, and reservation details.",
+    activities: [
+      {
+        name: "Restaurants",
+        description:
+          "List restaurants to visit, local cuisines to try, and reservation details.",
+      },
+    ],
   },
   {
     id: "trending",
     title: "Trending Reels",
     icon: <TrendingUp className="h-5 w-5" />,
-    content:
-      "Popular spots for photos and videos, trending locations from social media.",
+    activities: [
+      {
+        name: "Popular Spots",
+        description:
+          "Popular spots for photos and videos, trending locations from social media.",
+      },
+    ],
   },
   {
     id: "landmarks",
     title: "Must-See Landmarks",
     icon: <MapPin className="h-5 w-5" />,
-    content: "Important landmarks and attractions you don't want to miss.",
+    activities: [
+      {
+        name: "Landmarks",
+        description:
+          "Important landmarks and attractions you don't want to miss.",
+      },
+    ],
   },
   {
     id: "photography",
     title: "Photography Spots",
     icon: <Camera className="h-5 w-5" />,
-    content: "Best locations and times for taking memorable photos.",
+    activities: [
+      {
+        name: "Photo Locations",
+        description: "Best locations and times for taking memorable photos.",
+      },
+    ],
   },
   {
     id: "transport",
     title: "Transportation",
     icon: <Car className="h-5 w-5" />,
-    content:
-      "Local transportation options, rental information, and navigation tips.",
+    activities: [
+      {
+        name: "Transport Options",
+        description:
+          "Local transportation options, rental information, and navigation tips.",
+      },
+    ],
   },
 ];
 
@@ -85,16 +124,20 @@ interface CustomSectionsProps {
 export function TripSections({ tripId }: CustomSectionsProps) {
   const [sections, setSections] = useState<SectionType[]>([]);
   const [open, setOpen] = useState(false);
+  // Update the state variables
   const [editingSection, setEditingSection] = useState<SectionType | null>(
     null
   );
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [editName, setEditName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const api = useApi();
 
   const { toast } = useToast();
 
+  // Update the addSection function
   const addSection = (template: (typeof SECTION_TEMPLATES)[0]) => {
     setSections([
       ...sections,
@@ -110,29 +153,47 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     setSections(sections.filter((section) => section.id !== id));
   };
 
-  const openEditDialog = (section: SectionType) => {
+  // Update the openEditDialog function
+  const openEditDialog = (section: SectionType, activity: Activity) => {
     setEditingSection(section);
-    setEditContent(section.content);
+    setEditingActivity(activity);
+    setEditName(activity.name);
+    setEditContent(activity.description);
     setIsEditing(true);
   };
 
+  // Update the saveEditedContent function
   const saveEditedContent = () => {
-    if (!editingSection) return;
+    if (!editingSection || !editingActivity) return;
 
     setSections(
-      sections.map((section) =>
-        section.id === editingSection.id
-          ? { ...section, content: editContent }
-          : section
-      )
+      sections.map((section) => {
+        if (section.id === editingSection.id) {
+          return {
+            ...section,
+            activities: section.activities.map((activity) => {
+              if (activity.name === editingActivity.name) {
+                return {
+                  name: editName,
+                  description: editContent,
+                };
+              }
+              return activity;
+            }),
+          };
+        }
+        return section;
+      })
     );
 
     setIsEditing(false);
     setEditingSection(null);
+    setEditingActivity(null);
   };
 
+  // Update the generateAIContent function
   const generateAIContent = async () => {
-    if (!editingSection) return;
+    if (!editingSection || !editingActivity) return;
 
     setIsGenerating(true);
 
@@ -145,11 +206,13 @@ export function TripSections({ tripId }: CustomSectionsProps) {
         }
       );
 
-      setEditContent(response.activities[0].description || "");
-      toast({
-        title: "Content Generated",
-        description: "AI has created content for your section.",
-      });
+      if (response.activities && response.activities.length > 0) {
+        setEditContent(response.activities[0].description || "");
+        toast({
+          title: "Content Generated",
+          description: "AI has created content for your activity.",
+        });
+      }
     } catch (error) {
       toast({
         title: "Generation Failed",
@@ -160,6 +223,44 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  // Add a function to add a new activity to a section
+  const addActivity = (sectionId: string) => {
+    setSections(
+      sections.map((section) => {
+        if (section.id === sectionId) {
+          return {
+            ...section,
+            activities: [
+              ...section.activities,
+              {
+                name: `New Activity ${section.activities.length + 1}`,
+                description: "Add details for this activity.",
+              },
+            ],
+          };
+        }
+        return section;
+      })
+    );
+  };
+
+  // Add a function to remove an activity from a section
+  const removeActivity = (sectionId: string, activityName: string) => {
+    setSections(
+      sections.map((section) => {
+        if (section.id === sectionId) {
+          return {
+            ...section,
+            activities: section.activities.filter(
+              (activity) => activity.name !== activityName
+            ),
+          };
+        }
+        return section;
+      })
+    );
   };
 
   return (
@@ -196,6 +297,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
             </Dialog>
           </CardTitle>
         </CardHeader>
+        {/* Update the CardContent section to display activities */}
         <CardContent>
           {sections.length === 0 ? (
             <div className="text-center py-6 text-muted-foreground">
@@ -225,16 +327,50 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                       {section.icon}
                       <h3 className="font-medium">{section.title}</h3>
                     </div>
-                    <div className="text-sm prose prose-sm max-w-none">
-                      <ReactMarkdown>{section.content}</ReactMarkdown>
+
+                    <div className="space-y-3 mt-3">
+                      {section.activities.map((activity, index) => (
+                        <div key={index} className="border-l-2 pl-3 py-1">
+                          <div className="flex justify-between items-start">
+                            <h4 className="font-medium text-sm">
+                              {activity.name}
+                            </h4>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={() =>
+                                removeActivity(section.id, activity.name)
+                              }
+                            >
+                              <X className="h-3 w-3" />
+                              <span className="sr-only">Remove activity</span>
+                            </Button>
+                          </div>
+                          <div className="text-sm prose prose-sm max-w-none mt-1">
+                            <ReactMarkdown>
+                              {activity.description}
+                            </ReactMarkdown>
+                          </div>
+                          <Button
+                            variant="link"
+                            className="p-0 h-auto mt-1 text-sm"
+                            onClick={() => openEditDialog(section, activity)}
+                          >
+                            Edit activity
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-2"
+                        onClick={() => addActivity(section.id)}
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add Activity
+                      </Button>
                     </div>
-                    <Button
-                      variant="link"
-                      className="p-0 h-auto mt-2 text-sm"
-                      onClick={() => openEditDialog(section)}
-                    >
-                      Edit details
-                    </Button>
                   </div>
                 ))}
               </div>
@@ -243,17 +379,35 @@ export function TripSections({ tripId }: CustomSectionsProps) {
         </CardContent>
       </Card>
 
+      {/* Update the Dialog content to include activity name editing */}
       <Dialog
         open={isEditing}
         onOpenChange={(open) => !open && setIsEditing(false)}
       >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingSection?.title}</DialogTitle>
+            <DialogTitle>{editingSection?.title} - Edit Activity</DialogTitle>
           </DialogHeader>
 
-          <div className="py-4">
-            <MarkdownEditor value={editContent} onChange={setEditContent} />
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="activity-name" className="text-sm font-medium">
+                Activity Name
+              </label>
+              <input
+                id="activity-name"
+                className="w-full p-2 border rounded-md"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Activity Description
+              </label>
+              <MarkdownEditor value={editContent} onChange={setEditContent} />
+            </div>
           </div>
 
           <DialogFooter className="flex items-center justify-between sm:justify-between">
