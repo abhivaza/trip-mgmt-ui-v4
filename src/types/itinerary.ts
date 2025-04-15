@@ -13,10 +13,11 @@ export interface ItineraryResponse {
 }
 
 export interface ItineraryDayActivity {
-  activities: string[];
   dayNumber: number;
   date: string;
+  place: string;
   title: string;
+  shortDescription: string;
   description: string;
 }
 
