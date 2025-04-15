@@ -137,6 +137,9 @@ export function TripSections({ tripId }: CustomSectionsProps) {
   const [customSectionTitle, setCustomSectionTitle] = useState("");
   const [isCreatingCustom, setIsCreatingCustom] = useState(false);
   const api = useApi();
+  const [generatingSectionId, setGeneratingSectionId] = useState<string | null>(
+    null
+  );
 
   const { toast } = useToast();
 
@@ -149,6 +152,9 @@ export function TripSections({ tripId }: CustomSectionsProps) {
 
     setSections([...sections, newSection]);
     setOpen(false);
+
+    // Set the generating section ID
+    setGeneratingSectionId(newSection.id);
 
     // Generate AI content for the template section
     try {
@@ -191,6 +197,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
       console.error("Error generating content:", error);
     } finally {
       setIsGenerating(false);
+      setGeneratingSectionId(null);
     }
   };
 
@@ -221,6 +228,9 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     setCustomSectionTitle("");
     setIsCreatingCustom(false);
     setOpen(false);
+
+    // Set the generating section ID
+    setGeneratingSectionId(newSection.id);
 
     // Generate AI content for the new section
     try {
@@ -263,6 +273,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
       console.error("Error generating content:", error);
     } finally {
       setIsGenerating(false);
+      setGeneratingSectionId(null);
     }
   };
 
@@ -389,7 +400,12 @@ export function TripSections({ tripId }: CustomSectionsProps) {
             <span>What would you do on your Trip?</span>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  disabled={isGenerating || generatingSectionId !== null}
+                >
                   <Plus className="h-4 w-4" />
                   <span className="sr-only">Add section</span>
                 </Button>
@@ -422,7 +438,12 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                       >
                         Cancel
                       </Button>
-                      <Button onClick={addCustomSection}>Create Section</Button>
+                      <Button
+                        onClick={addCustomSection}
+                        disabled={isGenerating || generatingSectionId !== null}
+                      >
+                        Create Section
+                      </Button>
                     </div>
                   </div>
                 ) : (
@@ -434,6 +455,9 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                           variant="outline"
                           className="h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent"
                           onClick={() => addSection(template)}
+                          disabled={
+                            isGenerating || generatingSectionId !== null
+                          }
                         >
                           {template.icon}
                           <span>{template.title}</span>
@@ -444,6 +468,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                       <Button
                         variant="outline"
                         onClick={() => setIsCreatingCustom(true)}
+                        disabled={isGenerating || generatingSectionId !== null}
                       >
                         <Plus className="h-4 w-4 mr-2" />
                         Create Custom Section
@@ -477,13 +502,44 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                       size="sm"
                       className="absolute top-2 right-2 h-6 w-6 p-0"
                       onClick={() => removeSection(section.id)}
+                      disabled={generatingSectionId === section.id}
                     >
                       <X className="h-3 w-3" />
                       <span className="sr-only">Remove</span>
                     </Button>
                     <div className="flex items-center gap-2 mb-2">
-                      {section.icon}
+                      {generatingSectionId === section.id ? (
+                        <div className="animate-spin h-5 w-5">
+                          <svg
+                            className="h-5 w-5 text-primary"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                        </div>
+                      ) : (
+                        section.icon
+                      )}
                       <h3 className="font-medium">{section.title}</h3>
+                      {generatingSectionId === section.id && (
+                        <span className="text-xs text-muted-foreground ml-2">
+                          Generating content...
+                        </span>
+                      )}
                     </div>
 
                     <div className="space-y-3 mt-3">
@@ -500,6 +556,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                               onClick={() =>
                                 removeActivity(section.id, activity.name)
                               }
+                              disabled={generatingSectionId === section.id}
                             >
                               <X className="h-3 w-3" />
                               <span className="sr-only">Remove activity</span>
@@ -514,6 +571,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                             variant="link"
                             className="p-0 h-auto mt-1 text-sm"
                             onClick={() => openEditDialog(section, activity)}
+                            disabled={generatingSectionId === section.id}
                           >
                             Edit activity
                           </Button>
@@ -524,6 +582,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                         size="sm"
                         className="w-full mt-2"
                         onClick={() => addActivity(section.id)}
+                        disabled={generatingSectionId === section.id}
                       >
                         <Plus className="h-3 w-3 mr-1" />
                         Add Activity
