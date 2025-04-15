@@ -31,11 +31,8 @@ import ReactMarkdown from "react-markdown";
 import { useApi } from "@/providers/api-provider";
 import { ThingsToDo } from "@/types/itinerary";
 
-type SectionType = {
-  id: string;
-  title: string;
+type SectionType = ThingsToDo & {
   icon: React.ReactNode;
-  content: string;
 };
 
 const SECTION_TEMPLATES = [

@@ -21,7 +21,8 @@ export interface ItineraryDayActivity {
 }
 
 export interface ThingsToDo {
-  sectionHeader: string;
+  id: string;
+  title: string;
   activities: Activity[];
 }
 
