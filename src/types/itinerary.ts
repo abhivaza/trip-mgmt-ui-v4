@@ -31,3 +31,14 @@ export interface Activity {
   name: string;
   description: string;
 }
+
+export interface ThingsToDo {
+  id: string;
+  title: string;
+  activities: Activity[];
+}
+
+export interface Activity {
+  name: string;
+  description: string;
+}
