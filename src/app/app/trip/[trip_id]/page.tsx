@@ -135,34 +135,34 @@ export default function ItineraryPage() {
       if (!editingSection) return;
 
       try {
-        // Update local state
+        // Create updated day
         const updatedDay = {
           ...day,
           title: editName,
           description: editContent,
         };
 
-        // You might need to update the itinerary state here
-        // This is a simplified approach
-        setItinerary((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            itinerary: prev.itinerary.map((d) =>
-              d.dayNumber === day.dayNumber ? updatedDay : d
-            ),
-          };
-        });
+        // Create a copy of the current itinerary
+        const updatedItinerary = { ...itinerary };
 
-        await api.put(`/app/trip/${trip_id}`, {
-          itinerary,
-        });
+        // Update the itinerary with the edited day
+        if (updatedItinerary && updatedItinerary.itinerary) {
+          updatedItinerary.itinerary = updatedItinerary.itinerary.map((d) =>
+            d.dayNumber === day.dayNumber ? updatedDay : d
+          );
 
-        setIsEditing(false);
-        toast({
-          title: "Success",
-          description: "Activities updated successfully",
-        });
+          // Update local state
+          setItinerary(updatedItinerary);
+
+          // Call API to update the itinerary
+          await api.put(`/app/trip/${trip_id}`, updatedItinerary);
+
+          setIsEditing(false);
+          toast({
+            title: "Success",
+            description: "Activities updated successfully",
+          });
+        }
       } catch (error) {
         console.error("Error saving activities:", error);
         toast({
@@ -184,7 +184,33 @@ export default function ItineraryPage() {
         });
 
         if (response) {
+          // Update the edit content
           setEditContent(response.description || "");
+
+          // Update local itinerary state
+          const updatedItinerary = { ...itinerary };
+          if (updatedItinerary && updatedItinerary.itinerary) {
+            updatedItinerary.itinerary = updatedItinerary.itinerary.map((d) => {
+              if (d.dayNumber === day.dayNumber) {
+                return {
+                  ...d,
+                  description: response.description || d.description,
+                };
+              }
+              return d;
+            });
+
+            // Set the updated itinerary
+            setItinerary(updatedItinerary);
+
+            // Call API to update the itinerary
+            await api.put(`/app/trip/${trip_id}`, updatedItinerary);
+
+            toast({
+              title: "Success",
+              description: "Itinerary content updated successfully",
+            });
+          }
         }
       } catch (error) {
         console.error("Error generating content:", error);
@@ -298,7 +324,7 @@ export default function ItineraryPage() {
       {itinerary && (
         <div className="mb-8">
           <TripImage
-            imageURL={itinerary.imageURL}
+            imageURL={itinerary.imageURL || ""}
             highlight={`Your Trip to ${itinerary?.city}, ${itinerary?.country}`}
           />
         </div>
@@ -314,7 +340,7 @@ export default function ItineraryPage() {
           </div>
         )}
         <div className="flex flex-wrap gap-2 justify-center">
-          {itinerary?.tags.map((tag) => (
+          {itinerary?.tags?.map((tag) => (
             <Badge key={tag} variant="secondary">
               {tag}
             </Badge>
@@ -325,7 +351,7 @@ export default function ItineraryPage() {
       <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-6`}>
         <div className={`w-full`}>
           <div className="flex flex-col gap-6">
-            {itinerary?.itinerary.map((day) => (
+            {itinerary?.itinerary?.map((day) => (
               <DayCard key={day.dayNumber} day={day} />
             ))}
           </div>

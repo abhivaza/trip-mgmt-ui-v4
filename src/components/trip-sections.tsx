@@ -14,7 +14,6 @@ import {
   Car,
   Sparkles,
   Loader2,
-  Edit2,
   Edit,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
