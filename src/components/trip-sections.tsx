@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Plus,
   X,
@@ -29,23 +29,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import { useApi } from "@/providers/api-provider";
-import type { ThingsToDo } from "@/types/itinerary";
+import type { Activity, ThingsToDo } from "@/types/itinerary";
 import { EditActivityDialog } from "./edit-activity-dialog";
 
 // Update the SectionType to match the new structure
-type SectionType = ThingsToDo & {
-  icon: React.ReactNode;
-  activities: Activity[];
-};
-
-interface Activity {
-  name: string;
-  description: string;
-}
 
 interface CustomSectionsProps {
   tripId: string;
   place: string;
+  thingsToDo: ThingsToDo[];
+  setThingsToDo: (thingsToDo: ThingsToDo[]) => void;
 }
 
 // First, let's update the SECTION_TEMPLATES array to include a custom option
@@ -124,12 +117,15 @@ const SECTION_TEMPLATES = [
 ];
 
 // Now, let's add state for custom section creation
-export function TripSections({ tripId, place }: CustomSectionsProps) {
-  const [sections, setSections] = useState<SectionType[]>([]);
+export function TripSections({
+  tripId,
+  place,
+  thingsToDo,
+  setThingsToDo,
+}: CustomSectionsProps) {
+  const [sections, setSections] = useState<ThingsToDo[]>([]);
   const [open, setOpen] = useState(false);
-  const [editingSection, setEditingSection] = useState<SectionType | null>(
-    null
-  );
+  const [editingSection, setEditingSection] = useState<ThingsToDo | null>(null);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [editContent, setEditContent] = useState("");
   const [editName, setEditName] = useState("");
@@ -144,6 +140,10 @@ export function TripSections({ tripId, place }: CustomSectionsProps) {
   );
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    setSections(thingsToDo || []);
+  }, [thingsToDo]);
 
   // Update the addSection function
   const addSection = async (template: (typeof SECTION_TEMPLATES)[0]) => {
@@ -281,7 +281,7 @@ export function TripSections({ tripId, place }: CustomSectionsProps) {
   };
 
   // Update the openEditDialog function
-  const openEditDialog = (section: SectionType, activity: Activity) => {
+  const openEditDialog = (section: ThingsToDo, activity: Activity) => {
     setEditingSection(section);
     setEditingActivity(activity);
     setEditName(activity.name);
@@ -510,7 +510,7 @@ export function TripSections({ tripId, place }: CustomSectionsProps) {
                       {generatingSectionId === section.id ? (
                         <Loader2 className="h-5 w-5 animate-spin text-primary" />
                       ) : (
-                        section.icon
+                        <MapPin className="h-5 w-5" />
                       )}
                       <h3 className="font-medium">{section.title}</h3>
                       {generatingSectionId === section.id && (
@@ -582,11 +582,7 @@ export function TripSections({ tripId, place }: CustomSectionsProps) {
       <EditActivityDialog
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
-        activity={
-          editingActivity
-            ? { title: editingSection?.title || "", ...editingActivity }
-            : null
-        }
+        title={editingSection?.title || ""}
         editName={editName}
         setEditName={setEditName}
         editContent={editContent}

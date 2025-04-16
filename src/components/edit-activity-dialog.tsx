@@ -1,28 +1,33 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { MarkdownEditor } from "@/components/markdown-editor"
-import { Sparkles } from "lucide-react"
-import type { ItineraryDayActivity } from "@/types/itinerary"
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { MarkdownEditor } from "@/components/markdown-editor";
+import { Sparkles } from "lucide-react";
 
 interface EditActivityDialogProps {
-  isOpen: boolean
-  onClose: () => void
-  activity: ItineraryDayActivity | null
-  editName: string
-  setEditName: (name: string) => void
-  editContent: string
-  setEditContent: (content: string) => void
-  onSave: () => Promise<void>
-  onGenerateAI: () => Promise<void>
-  isGenerating: boolean
+  isOpen: boolean;
+  onClose: () => void;
+  title: string | null;
+  editName: string;
+  setEditName: (name: string) => void;
+  editContent: string;
+  setEditContent: (content: string) => void;
+  onSave: () => Promise<void>;
+  onGenerateAI: () => Promise<void>;
+  isGenerating: boolean;
 }
 
 export const EditActivityDialog = ({
   isOpen,
   onClose,
-  activity,
+  title,
   editName,
   setEditName,
   editContent,
@@ -35,7 +40,7 @@ export const EditActivityDialog = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{activity?.title} - Edit Activity</DialogTitle>
+          <DialogTitle>{title} - Edit Activity</DialogTitle>
         </DialogHeader>
 
         <div className="py-4 space-y-4">
@@ -58,7 +63,12 @@ export const EditActivityDialog = ({
         </div>
 
         <DialogFooter className="flex items-center justify-between sm:justify-between">
-          <Button variant="outline" onClick={onGenerateAI} disabled={isGenerating} className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={onGenerateAI}
+            disabled={isGenerating}
+            className="flex items-center gap-2"
+          >
             <Sparkles className="h-4 w-4" />
             {isGenerating ? "Generating..." : "Generate with AI"}
           </Button>
@@ -71,5 +81,5 @@ export const EditActivityDialog = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
