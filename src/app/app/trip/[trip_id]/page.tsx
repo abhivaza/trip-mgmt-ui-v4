@@ -219,22 +219,29 @@ export default function ItineraryPage() {
           <CardDescription>{day.shortDescription}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Activities:</h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleEditActivity(day)}
-              className="flex items-center gap-1"
-            >
-              <Edit className="h-4 w-4" />
-              Edit
-            </Button>
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex-1">
+              <div className="mb-2">
+                <h3 className="font-semibold">Activities:</h3>
+              </div>
+              <div className="prose prose-sm max-w-none">
+                <ReactMarkdown>{day.description}</ReactMarkdown>
+              </div>
+              <div className="mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => handleEditActivity(day)}
+                  className="flex items-center gap-1"
+                >
+                  <Edit className="h-4 w-4" />
+                  Edit Itinerary
+                </Button>
+              </div>
+            </div>
+            <div className="flex-1">
+              <TripSections tripId={trip_id} />
+            </div>
           </div>
-          <div className="prose prose-sm max-w-none">
-            <ReactMarkdown>{day.description}</ReactMarkdown>
-          </div>
-          <TripSections tripId={trip_id} />
         </CardContent>
 
         <Dialog

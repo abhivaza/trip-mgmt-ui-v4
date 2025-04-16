@@ -160,12 +160,13 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     // Generate AI content for the template section
     try {
       setIsGenerating(true);
-      const response = await api.post<{ activity: string }, ThingsToDo>(
-        `/app/trip/${tripId}/section/generate`,
-        {
-          activity: template.title,
-        }
-      );
+      const response = await api.post<
+        { activity: string; place: string },
+        ThingsToDo
+      >(`/app/trip/${tripId}/section/generate`, {
+        activity: template.title,
+        place: template.title,
+      });
 
       if (response.activities && response.activities.length > 0) {
         // Update the section with the generated activities
