@@ -235,12 +235,13 @@ export function TripSections({ tripId, place }: CustomSectionsProps) {
     // Generate AI content for the new section
     try {
       setIsGenerating(true);
-      const response = await api.post<{ activity: string }, ThingsToDo>(
-        `/app/trip/${tripId}/section/generate`,
-        {
-          activity: customSectionTitle,
-        }
-      );
+      const response = await api.post<
+        { activity: string; place: string },
+        ThingsToDo
+      >(`/app/trip/${tripId}/section/generate`, {
+        activity: customSectionTitle,
+        place: place,
+      });
 
       if (response.activities && response.activities.length > 0) {
         // Update the section with the generated activities
@@ -326,13 +327,13 @@ export function TripSections({ tripId, place }: CustomSectionsProps) {
     setIsGenerating(true);
 
     try {
-      // Call the API endpoint with the trip ID and section type
-      const response = await api.post<{ activity: string }, ThingsToDo>(
-        `/app/trip/${tripId}/section/generate`,
-        {
-          activity: editingSection.title,
-        }
-      );
+      const response = await api.post<
+        { activity: string; place: string },
+        ThingsToDo
+      >(`/app/trip/${tripId}/section/generate`, {
+        activity: customSectionTitle,
+        place: place,
+      });
 
       if (response.activities && response.activities.length > 0) {
         setEditContent(response.activities[0].description || "");

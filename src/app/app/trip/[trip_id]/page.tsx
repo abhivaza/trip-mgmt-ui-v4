@@ -179,16 +179,15 @@ export default function ItineraryPage() {
       try {
         // Implement your AI content generation logic here
         // For example:
-        const response = await api.post(
-          `/app/trip/${trip_id}/generate-activity`,
-          {
-            dayNumber: day.dayNumber,
-            currentTitle: editName,
-          }
-        );
+        const response = await api.post<
+          { place: string },
+          ItineraryDayActivity
+        >(`/app/trip/${trip_id}/day/generate`, {
+          place: day.place,
+        });
 
-        if (response.content) {
-          setEditContent(response.content);
+        if (response) {
+          setEditContent(response.description || "");
         }
       } catch (error) {
         console.error("Error generating content:", error);
