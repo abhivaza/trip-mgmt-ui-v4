@@ -19,7 +19,7 @@ export interface ItineraryDayActivity {
   title: string;
   shortDescription: string;
   description: string;
-  thingsToDo?: ThingsToDo;
+  thingsToDo?: ThingsToDo[];
 }
 
 export interface ThingsToDo {

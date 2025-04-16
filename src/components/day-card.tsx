@@ -62,6 +62,7 @@ export const DayCard = ({
         ...day,
         title: editName,
         description: editContent,
+        thingsToDo,
       };
 
       // Create a copy of the current itinerary
@@ -186,7 +187,7 @@ export const DayCard = ({
             <TripSections
               tripId={tripId}
               place={day.place}
-              thingsToDo={thingsToDo}
+              thingsToDo={day.thingsToDo || []}
               setThingsToDo={setThingsToDo}
             />
           </div>

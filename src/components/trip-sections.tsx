@@ -1,7 +1,5 @@
 "use client";
 
-import type React from "react";
-
 import { useEffect, useState } from "react";
 import {
   Plus,
@@ -144,6 +142,12 @@ export function TripSections({
   useEffect(() => {
     setSections(thingsToDo || []);
   }, [thingsToDo]);
+
+  useEffect(() => {
+    if (sections.length > 0) {
+      setThingsToDo(sections);
+    }
+  }, [sections, setThingsToDo]);
 
   // Update the addSection function
   const addSection = async (template: (typeof SECTION_TEMPLATES)[0]) => {
