@@ -1,90 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Trophy } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
-import { useParams } from "next/navigation";
+import { TripImage } from "@/components/trip-image";
+import { TripMeta } from "@/components//trip-meta";
+import { DayCard } from "@/components/day-card";
 import { ChatbotSection } from "@/components/chatbot";
-import type {
-  ItineraryDayActivity,
-  ItineraryResponse,
-} from "@/types/itinerary";
+import { useResponsive } from "@/hooks/use-responsive";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
-import { ShareTrip } from "@/components/share-trip";
-import { TripSections } from "@/components/trip-sections";
-import { MarkdownEditor } from "@/components/markdown-editor";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Sparkles, Edit } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-
-const TripImage = ({
-  imageURL,
-  highlight,
-}: {
-  imageURL: string;
-  highlight: string;
-}) => {
-  const params: { trip_id: string } = useParams();
-  const { trip_id } = params;
-
-  return (
-    <div className="relative w-full h-[300px] mb-8 rounded-lg overflow-hidden">
-      <Image
-        src={imageURL || "/placeholder.svg"}
-        alt={`${highlight}`}
-        layout="fill"
-        objectFit="cover"
-        className="transition-transform duration-300 hover:scale-105"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-between p-6">
-        <h2 className="text-white text-3xl font-bold drop-shadow-lg">
-          {highlight}
-        </h2>
-        <ShareTrip tripId={trip_id} className="absolute top-4 right-4" />
-      </div>
-    </div>
-  );
-};
+import type { ItineraryResponse } from "@/types/itinerary";
 
 export default function ItineraryPage() {
-  const [isMobile, setIsMobile] = useState(false);
   const [itinerary, setItinerary] = useState<ItineraryResponse>();
+  const { isMobile } = useResponsive();
 
   const params: { trip_id: string } = useParams();
   const { trip_id } = params;
 
   const api = useApi();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-
-    return () => {
-      window.removeEventListener("resize", checkIfMobile);
-    };
-  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -116,209 +52,6 @@ export default function ItineraryPage() {
     fetchData();
   }, [api, trip_id, toast]);
 
-  const DayCard = ({ day }: { day: ItineraryDayActivity }) => {
-    const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [editingSection, setEditingSection] =
-      useState<ItineraryDayActivity | null>(null);
-    const [editName, setEditName] = useState<string>("");
-    const [editContent, setEditContent] = useState<string>("");
-    const [isGenerating, setIsGenerating] = useState<boolean>(false);
-
-    const handleEditActivity = (activity: ItineraryDayActivity) => {
-      setEditingSection(activity);
-      setEditName(activity.title);
-      setEditContent(activity.description);
-      setIsEditing(true);
-    };
-
-    const saveEditedContent = async () => {
-      if (!editingSection) return;
-
-      try {
-        // Create updated day
-        const updatedDay = {
-          ...day,
-          title: editName,
-          description: editContent,
-        };
-
-        // Create a copy of the current itinerary
-        const updatedItinerary = { ...itinerary };
-
-        // Update the itinerary with the edited day
-        if (updatedItinerary && updatedItinerary.itinerary) {
-          updatedItinerary.itinerary = updatedItinerary.itinerary.map((d) =>
-            d.dayNumber === day.dayNumber ? updatedDay : d
-          );
-
-          // Update local state
-          setItinerary(updatedItinerary);
-
-          // Call API to update the itinerary
-          await api.put(`/app/trip/${trip_id}`, updatedItinerary);
-
-          setIsEditing(false);
-          toast({
-            title: "Success",
-            description: "Activities updated successfully",
-          });
-        }
-      } catch (error) {
-        console.error("Error saving activities:", error);
-        toast({
-          title: "Error",
-          description: "Failed to save activities",
-          variant: "destructive",
-        });
-      }
-    };
-
-    const generateAIContent = async () => {
-      setIsGenerating(true);
-      try {
-        const response = await api.post<
-          { place: string },
-          ItineraryDayActivity
-        >(`/app/trip/${trip_id}/day/generate`, {
-          place: day.place,
-        });
-
-        if (response) {
-          // Update the edit content
-          setEditContent(response.description || "");
-
-          // Update local itinerary state
-          const updatedItinerary = { ...itinerary };
-          if (updatedItinerary && updatedItinerary.itinerary) {
-            updatedItinerary.itinerary = updatedItinerary.itinerary.map((d) => {
-              if (d.dayNumber === day.dayNumber) {
-                return {
-                  ...d,
-                  description: response.description || d.description,
-                };
-              }
-              return d;
-            });
-
-            // Set the updated itinerary
-            setItinerary(updatedItinerary);
-
-            // Call API to update the itinerary
-            await api.put(`/app/trip/${trip_id}`, updatedItinerary);
-
-            toast({
-              title: "Success",
-              description: "Itinerary content updated successfully",
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Error generating content:", error);
-        toast({
-          title: "Error",
-          description: "Failed to generate content with AI",
-          variant: "destructive",
-        });
-      } finally {
-        setIsGenerating(false);
-      }
-    };
-
-    return (
-      <Card className="w-full h-full">
-        <CardHeader>
-          <CardTitle className="flex justify-between items-center">
-            <span>
-              Day {day.dayNumber}: {day.title}
-            </span>
-            <span className="text-sm text-muted-foreground">
-              {new Date(day.date).toLocaleDateString("en-US", {
-                weekday: "long",
-              })}
-            </span>
-          </CardTitle>
-          <CardDescription>Place: {day.place}</CardDescription>
-          <CardDescription>{day.shortDescription}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1">
-              <div className="mb-2">
-                <h3 className="font-semibold">Activities:</h3>
-              </div>
-              <div className="prose prose-sm max-w-none">
-                <ReactMarkdown>{day.description}</ReactMarkdown>
-              </div>
-              <div className="mt-2">
-                <Button
-                  variant="link"
-                  onClick={() => handleEditActivity(day)}
-                  className="p-0 h-auto mt-1"
-                >
-                  <Edit className="h-4 w-4" />
-                  Edit Itinerary
-                </Button>
-              </div>
-            </div>
-            <div className="flex-1">
-              <TripSections tripId={trip_id} place={day.place} />
-            </div>
-          </div>
-        </CardContent>
-
-        <Dialog
-          open={isEditing}
-          onOpenChange={(open) => !open && setIsEditing(false)}
-        >
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>{editingSection?.title} - Edit Activity</DialogTitle>
-            </DialogHeader>
-
-            <div className="py-4 space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="activity-name" className="text-sm font-medium">
-                  Activity Name
-                </label>
-                <input
-                  id="activity-name"
-                  className="w-full p-2 border rounded-md"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Activity Description
-                </label>
-                <MarkdownEditor value={editContent} onChange={setEditContent} />
-              </div>
-            </div>
-
-            <DialogFooter className="flex items-center justify-between sm:justify-between">
-              <Button
-                variant="outline"
-                onClick={generateAIContent}
-                disabled={isGenerating}
-                className="flex items-center gap-2"
-              >
-                <Sparkles className="h-4 w-4" />
-                {isGenerating ? "Generating..." : "Generate with AI"}
-              </Button>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setIsEditing(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={saveEditedContent}>Save Changes</Button>
-              </div>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </Card>
-    );
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       {itinerary && (
@@ -326,33 +59,27 @@ export default function ItineraryPage() {
           <TripImage
             imageURL={itinerary.imageURL || ""}
             highlight={`Your Trip to ${itinerary?.city}, ${itinerary?.country}`}
+            tripId={trip_id}
           />
         </div>
       )}
 
-      <div className="text-center mb-8">
-        {itinerary?.popularityRank === 1 && (
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Trophy className="w-5 h-5 text-yellow-500" />
-            <span className="text-sm text-muted-foreground">
-              #1 Most Popular Destination
-            </span>
-          </div>
-        )}
-        <div className="flex flex-wrap gap-2 justify-center">
-          {itinerary?.tags?.map((tag) => (
-            <Badge key={tag} variant="secondary">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </div>
+      <TripMeta
+        tags={itinerary?.tags}
+        popularityRank={itinerary?.popularityRank}
+      />
 
       <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-6`}>
         <div className={`w-full`}>
           <div className="flex flex-col gap-6">
             {itinerary?.itinerary?.map((day) => (
-              <DayCard key={day.dayNumber} day={day} />
+              <DayCard
+                key={day.dayNumber}
+                day={day}
+                tripId={trip_id}
+                itinerary={itinerary}
+                setItinerary={setItinerary}
+              />
             ))}
           </div>
         </div>

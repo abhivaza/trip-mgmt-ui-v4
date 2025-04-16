@@ -394,7 +394,7 @@ export function TripSections({ tripId, place }: CustomSectionsProps) {
   // Now, let's update the CardContent section to increase height and ensure proper scrolling
   return (
     <>
-      <Card className="mb-6">
+      <Card>
         <CardHeader>
           <CardTitle className="text-lg flex justify-between items-center">
             <span>What would you do on your Trip?</span>
