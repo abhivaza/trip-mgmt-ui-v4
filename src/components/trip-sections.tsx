@@ -183,11 +183,6 @@ export function TripSections({ tripId }: CustomSectionsProps) {
             return section;
           })
         );
-
-        toast({
-          title: "Content Generated",
-          description: "AI has created content for your new section.",
-        });
       }
     } catch (error) {
       toast({

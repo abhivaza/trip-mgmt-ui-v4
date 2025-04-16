@@ -234,6 +234,7 @@ export default function ItineraryPage() {
           <div className="prose prose-sm max-w-none">
             <ReactMarkdown>{day.description}</ReactMarkdown>
           </div>
+          <TripSections tripId={trip_id} />
         </CardContent>
 
         <Dialog
@@ -326,8 +327,7 @@ export default function ItineraryPage() {
             ))}
           </div>
         </div>
-        <div className={`${isMobile ? "w-full" : "w-4/5 min-w-[300px]"}`}>
-          <TripSections tripId={trip_id} />
+        <div className={`${isMobile ? "w-full" : "w-2/5 min-w-[300px]"}`}>
           <ChatbotSection chatInitType="trip-specific" />
         </div>
       </div>
