@@ -135,11 +135,6 @@ export default function ItineraryPage() {
       if (!editingSection) return;
 
       try {
-        await api.put(`/app/trip/${trip_id}/day/${day.dayNumber}`, {
-          title: editName,
-          activitiesMarkdown: editContent,
-        });
-
         // Update local state
         const updatedDay = {
           ...day,
@@ -157,6 +152,10 @@ export default function ItineraryPage() {
               d.dayNumber === day.dayNumber ? updatedDay : d
             ),
           };
+        });
+
+        await api.put(`/app/trip/${trip_id}`, {
+          itinerary,
         });
 
         setIsEditing(false);
