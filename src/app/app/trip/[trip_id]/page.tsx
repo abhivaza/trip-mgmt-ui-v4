@@ -227,11 +227,11 @@ export default function ItineraryPage() {
               <div className="prose prose-sm max-w-none">
                 <ReactMarkdown>{day.description}</ReactMarkdown>
               </div>
-              <div className="mt-4">
+              <div className="mt-2">
                 <Button
-                  variant="outline"
+                  variant="link"
                   onClick={() => handleEditActivity(day)}
-                  className="flex items-center gap-1"
+                  className="p-0 h-auto mt-1"
                 >
                   <Edit className="h-4 w-4" />
                   Edit Itinerary
@@ -239,7 +239,7 @@ export default function ItineraryPage() {
               </div>
             </div>
             <div className="flex-1">
-              <TripSections tripId={trip_id} />
+              <TripSections tripId={trip_id} place={day.place} />
             </div>
           </div>
         </CardContent>

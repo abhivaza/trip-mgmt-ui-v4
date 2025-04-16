@@ -14,6 +14,8 @@ import {
   Car,
   Sparkles,
   Loader2,
+  Edit2,
+  Edit,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,6 +47,7 @@ interface Activity {
 
 interface CustomSectionsProps {
   tripId: string;
+  place: string;
 }
 
 // First, let's update the SECTION_TEMPLATES array to include a custom option
@@ -123,7 +126,7 @@ const SECTION_TEMPLATES = [
 ];
 
 // Now, let's add state for custom section creation
-export function TripSections({ tripId }: CustomSectionsProps) {
+export function TripSections({ tripId, place }: CustomSectionsProps) {
   const [sections, setSections] = useState<SectionType[]>([]);
   const [open, setOpen] = useState(false);
   const [editingSection, setEditingSection] = useState<SectionType | null>(
@@ -165,7 +168,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
         ThingsToDo
       >(`/app/trip/${tripId}/section/generate`, {
         activity: template.title,
-        place: template.title,
+        place: place,
       });
 
       if (response.activities && response.activities.length > 0) {
@@ -543,16 +546,20 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                               {activity.description}
                             </ReactMarkdown>
                           </div>
-                          <Button
-                            variant="link"
-                            className="p-0 h-auto mt-1 text-sm"
-                            onClick={() => openEditDialog(section, activity)}
-                            disabled={generatingSectionId === section.id}
-                          >
-                            Edit activity
-                          </Button>
+                          <div className="mt-2">
+                            <Button
+                              variant="link"
+                              className="p-0 h-auto mt-1 text-sm"
+                              onClick={() => openEditDialog(section, activity)}
+                              disabled={generatingSectionId === section.id}
+                            >
+                              <Edit className="h-3 w-3 mr-1" />
+                              Edit activity
+                            </Button>
+                          </div>
                         </div>
                       ))}
+
                       <Button
                         variant="outline"
                         size="sm"
