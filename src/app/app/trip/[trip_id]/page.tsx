@@ -177,8 +177,6 @@ export default function ItineraryPage() {
     const generateAIContent = async () => {
       setIsGenerating(true);
       try {
-        // Implement your AI content generation logic here
-        // For example:
         const response = await api.post<
           { place: string },
           ItineraryDayActivity
