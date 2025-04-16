@@ -24,14 +24,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MarkdownEditor } from "./markdown-editor";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import { useApi } from "@/providers/api-provider";
 import type { ThingsToDo } from "@/types/itinerary";
+import { EditActivityDialog } from "./edit-activity-dialog";
 
 // Update the SectionType to match the new structure
 type SectionType = ThingsToDo & {
@@ -580,55 +579,27 @@ export function TripSections({ tripId, place }: CustomSectionsProps) {
       </Card>
 
       {/* Update the Dialog content to include activity name editing */}
-      <Dialog
-        open={isEditing}
-        onOpenChange={(open) => !open && setIsEditing(false)}
-      >
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editingSection?.title} - Edit Activity</DialogTitle>
-          </DialogHeader>
-
-          <div className="py-4 space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="activity-name" className="text-sm font-medium">
-                Activity Name
-              </label>
-              <input
-                id="activity-name"
-                className="w-full p-2 border rounded-md"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Activity Description
-              </label>
-              <MarkdownEditor value={editContent} onChange={setEditContent} />
-            </div>
-          </div>
-
-          <DialogFooter className="flex items-center justify-between sm:justify-between">
-            <Button
-              variant="outline"
-              onClick={generateAIContent}
-              disabled={isGenerating}
-              className="flex items-center gap-2"
-            >
-              <Sparkles className="h-4 w-4" />
-              {isGenerating ? "Generating..." : "Generate with AI"}
-            </Button>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setIsEditing(false)}>
-                Cancel
-              </Button>
-              <Button onClick={saveEditedContent}>Save Changes</Button>
-            </div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EditActivityDialog
+        isOpen={isEditing}
+        onClose={() => setIsEditing(false)}
+        activity={
+          editingActivity
+            ? { title: editingSection?.title || "", ...editingActivity }
+            : null
+        }
+        editName={editName}
+        setEditName={setEditName}
+        editContent={editContent}
+        setEditContent={setEditContent}
+        onSave={async () => {
+          saveEditedContent();
+          return Promise.resolve();
+        }}
+        onGenerateAI={async () => {
+          return generateAIContent();
+        }}
+        isGenerating={isGenerating}
+      />
     </>
   );
 }
