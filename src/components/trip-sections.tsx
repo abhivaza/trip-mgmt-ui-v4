@@ -421,7 +421,7 @@ export function TripSections({
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add Custom Section</DialogTitle>
+                  <DialogTitle>Add Things to do</DialogTitle>
                 </DialogHeader>
                 {isCreatingCustom ? (
                   <div className="py-4 space-y-4">
