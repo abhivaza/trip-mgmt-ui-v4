@@ -140,14 +140,20 @@ export function TripSections({
   const { toast } = useToast();
 
   useEffect(() => {
-    setSections(thingsToDo || []);
+    if (thingsToDo && thingsToDo.length > 0) {
+      setSections(thingsToDo);
+    }
   }, [thingsToDo]);
 
   useEffect(() => {
-    if (sections.length > 0) {
+    // Only update parent if sections have actually changed and are different from thingsToDo
+    const sectionsJSON = JSON.stringify(sections);
+    const thingsToDoJSON = JSON.stringify(thingsToDo);
+
+    if (sectionsJSON !== thingsToDoJSON) {
       setThingsToDo(sections);
     }
-  }, [sections, setThingsToDo]);
+  }, [sections, setThingsToDo, thingsToDo]);
 
   // Update the addSection function
   const addSection = async (template: (typeof SECTION_TEMPLATES)[0]) => {

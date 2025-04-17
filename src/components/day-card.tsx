@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
@@ -36,7 +36,9 @@ export const DayCard = ({
   setItinerary,
 }: DayCardProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [thingsToDo, setThingsToDo] = useState<ThingsToDo[]>([]);
+  const [thingsToDo, setThingsToDo] = useState<ThingsToDo[]>(
+    day.thingsToDo || []
+  );
   const [editingSection, setEditingSection] =
     useState<ItineraryDayActivity | null>(null);
   const [editName, setEditName] = useState<string>("");
@@ -45,6 +47,10 @@ export const DayCard = ({
 
   const api = useApi();
   const { toast } = useToast();
+
+  useEffect(() => {
+    setThingsToDo(day.thingsToDo || []);
+  }, [day.thingsToDo]);
 
   const handleEditActivity = (activity: ItineraryDayActivity) => {
     setEditingSection(activity);
@@ -62,7 +68,7 @@ export const DayCard = ({
         ...day,
         title: editName,
         description: editContent,
-        thingsToDo,
+        thingsToDo: thingsToDo,
       };
 
       // Create a copy of the current itinerary
