@@ -394,7 +394,7 @@ export function TripSections({
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex justify-between items-center">
+          <CardTitle className="text-md flex justify-between items-center">
             <span>What would you do on your Trip?</span>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
@@ -480,7 +480,7 @@ export function TripSections({
         </CardHeader>
         <CardContent>
           {sections.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground">
+            <div className="text-center text-muted-foreground">
               <p>
                 Add things to do as per your preference and interests. Use AI to
                 generate starter content.
