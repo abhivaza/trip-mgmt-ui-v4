@@ -21,8 +21,8 @@ export function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
     <Card className="overflow-hidden transition-shadow hover:shadow-md relative">
       <Link href={`/app/trip/${trip.id}`} className="block">
         <Image
-          src={trip.imageURL}
-          alt={trip.city}
+          src={trip.imageURL || ""}
+          alt={trip.city || "Trip Image"}
           width={300}
           height={200}
           className="w-full h-40 object-cover"
@@ -38,10 +38,11 @@ export function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
           </div>
           <div className="flex items-center text-sm text-gray-500">
             <Calendar className="mr-2 h-4 w-4" />
-            {new Date(trip.fromDate).toLocaleDateString()} -{" "}
+            {new Date(trip.fromDate || "").toLocaleDateString()} -{" "}
             {new Date(
-              new Date(trip.fromDate).setDate(
-                new Date(trip.fromDate).getDate() + trip.tripDuration
+              new Date(trip.fromDate || "").setDate(
+                new Date(trip.fromDate || "").getDate() +
+                  (trip.tripDuration || 0)
               )
             ).toLocaleDateString()}
           </div>
@@ -56,11 +57,11 @@ export function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(trip.id)}>
+              <DropdownMenuItem onClick={() => onEdit(trip.id || "")}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(trip.id)}>
+              <DropdownMenuItem onClick={() => onDelete(trip.id || "")}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
