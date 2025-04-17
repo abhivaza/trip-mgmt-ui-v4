@@ -1,19 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Plus,
-  X,
-  MountainIcon as Hiking,
-  Utensils,
-  TrendingUp,
-  MapPin,
-  Camera,
-  Car,
-  Sparkles,
-  Loader2,
-  Edit,
-} from "lucide-react";
+import { Plus, X, Sparkles, Loader2, Edit } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +17,7 @@ import ReactMarkdown from "react-markdown";
 import { useApi } from "@/providers/api-provider";
 import type { Activity, ThingsToDo } from "@/types/itinerary";
 import { EditActivityDialog } from "./edit-activity-dialog";
+import { getSectionIcon } from "./get-section-icon";
 
 // Update the SectionType to match the new structure
 
@@ -37,6 +26,7 @@ interface CustomSectionsProps {
   place: string;
   thingsToDo: ThingsToDo[];
   setThingsToDo: (thingsToDo: ThingsToDo[]) => void;
+  onSectionAdded?: () => Promise<void>;
 }
 
 // First, let's update the SECTION_TEMPLATES array to include a custom option
@@ -44,7 +34,6 @@ const SECTION_TEMPLATES = [
   {
     id: "hiking",
     title: "Hiking Plan",
-    icon: <Hiking className="h-5 w-5" />,
     activities: [
       {
         name: "Hiking Trails",
@@ -56,7 +45,6 @@ const SECTION_TEMPLATES = [
   {
     id: "dining",
     title: "Dining Plan",
-    icon: <Utensils className="h-5 w-5" />,
     activities: [
       {
         name: "Restaurants",
@@ -68,7 +56,6 @@ const SECTION_TEMPLATES = [
   {
     id: "trending",
     title: "Trending Reels",
-    icon: <TrendingUp className="h-5 w-5" />,
     activities: [
       {
         name: "Popular Spots",
@@ -80,7 +67,6 @@ const SECTION_TEMPLATES = [
   {
     id: "landmarks",
     title: "Must-See Landmarks",
-    icon: <MapPin className="h-5 w-5" />,
     activities: [
       {
         name: "Landmarks",
@@ -92,7 +78,6 @@ const SECTION_TEMPLATES = [
   {
     id: "photography",
     title: "Photography Spots",
-    icon: <Camera className="h-5 w-5" />,
     activities: [
       {
         name: "Photo Locations",
@@ -103,7 +88,6 @@ const SECTION_TEMPLATES = [
   {
     id: "transport",
     title: "Transportation",
-    icon: <Car className="h-5 w-5" />,
     activities: [
       {
         name: "Transport Options",
@@ -120,6 +104,7 @@ export function TripSections({
   place,
   thingsToDo,
   setThingsToDo,
+  onSectionAdded,
 }: CustomSectionsProps) {
   const [sections, setSections] = useState<ThingsToDo[]>([]);
   const [open, setOpen] = useState(false);
@@ -164,6 +149,11 @@ export function TripSections({
 
     setSections([...sections, newSection]);
     setOpen(false);
+
+    // Call onSectionAdded if provided
+    if (onSectionAdded) {
+      await onSectionAdded();
+    }
 
     // Set the generating section ID
     setGeneratingSectionId(newSection.id);
@@ -223,7 +213,7 @@ export function TripSections({
     const newSection = {
       id: `custom-${Date.now()}`,
       title: customSectionTitle,
-      icon: <Sparkles className="h-5 w-5" />,
+      icon: getSectionIcon(customSectionTitle),
       activities: [
         {
           name: "New Activity",
@@ -236,6 +226,11 @@ export function TripSections({
     setCustomSectionTitle("");
     setIsCreatingCustom(false);
     setOpen(false);
+
+    // Call onSectionAdded if provided
+    if (onSectionAdded) {
+      await onSectionAdded();
+    }
 
     // Set the generating section ID
     setGeneratingSectionId(newSection.id);
@@ -468,7 +463,7 @@ export function TripSections({
                             isGenerating || generatingSectionId !== null
                           }
                         >
-                          {template.icon}
+                          {getSectionIcon(template.title)}
                           <span>{template.title}</span>
                         </Button>
                       ))}
@@ -520,7 +515,7 @@ export function TripSections({
                       {generatingSectionId === section.id ? (
                         <Loader2 className="h-5 w-5 animate-spin text-primary" />
                       ) : (
-                        <MapPin className="h-5 w-5" />
+                        getSectionIcon(section.title)
                       )}
                       <h3 className="font-medium">{section.title}</h3>
                       {generatingSectionId === section.id && (
@@ -588,7 +583,6 @@ export function TripSections({
         </CardContent>
       </Card>
 
-      {/* Update the Dialog content to include activity name editing */}
       <EditActivityDialog
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}

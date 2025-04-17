@@ -60,14 +60,12 @@ export const DayCard = ({
   };
 
   const saveEditedContent = async () => {
-    if (!editingSection) return;
-
     try {
       // Create updated day
       const updatedDay = {
         ...day,
-        title: editName,
-        description: editContent,
+        title: editingSection ? editName : day.title,
+        description: editingSection ? editContent : day.description,
         thingsToDo: thingsToDo,
       };
 
@@ -86,7 +84,10 @@ export const DayCard = ({
         // Call API to update the itinerary
         await api.put(`/app/trip/${tripId}`, updatedItinerary);
 
-        setIsEditing(false);
+        if (editingSection) {
+          setIsEditing(false);
+        }
+
         toast({
           title: "Success",
           description: "Activities updated successfully",
@@ -195,6 +196,7 @@ export const DayCard = ({
               place={day.place}
               thingsToDo={day.thingsToDo || []}
               setThingsToDo={setThingsToDo}
+              onSectionAdded={saveEditedContent}
             />
           </div>
         </div>
