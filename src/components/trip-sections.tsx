@@ -1,20 +1,7 @@
 "use client";
 
-import type React from "react";
-
-import { useState } from "react";
-import {
-  Plus,
-  X,
-  MountainIcon as Hiking,
-  Utensils,
-  TrendingUp,
-  MapPin,
-  Camera,
-  Car,
-  Sparkles,
-  Loader2,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, X, Loader2, Edit } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,28 +10,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MarkdownEditor } from "./markdown-editor";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import { useApi } from "@/providers/api-provider";
-import type { ThingsToDo } from "@/types/itinerary";
+import type { Activity, ThingsToDo } from "@/types/itinerary";
+import { EditActivityDialog } from "./edit-activity-dialog";
+import { getSectionIcon } from "./get-section-icon";
 
 // Update the SectionType to match the new structure
-type SectionType = ThingsToDo & {
-  icon: React.ReactNode;
-  activities: Activity[];
-};
-
-interface Activity {
-  name: string;
-  description: string;
-}
 
 interface CustomSectionsProps {
   tripId: string;
+  place: string;
+  thingsToDo: ThingsToDo[];
+  setThingsToDo: (thingsToDo: ThingsToDo[]) => void;
+  onSectionAdded?: () => Promise<void>;
 }
 
 // First, let's update the SECTION_TEMPLATES array to include a custom option
@@ -52,7 +34,6 @@ const SECTION_TEMPLATES = [
   {
     id: "hiking",
     title: "Hiking Plan",
-    icon: <Hiking className="h-5 w-5" />,
     activities: [
       {
         name: "Hiking Trails",
@@ -64,7 +45,6 @@ const SECTION_TEMPLATES = [
   {
     id: "dining",
     title: "Dining Plan",
-    icon: <Utensils className="h-5 w-5" />,
     activities: [
       {
         name: "Restaurants",
@@ -76,7 +56,6 @@ const SECTION_TEMPLATES = [
   {
     id: "trending",
     title: "Trending Reels",
-    icon: <TrendingUp className="h-5 w-5" />,
     activities: [
       {
         name: "Popular Spots",
@@ -88,7 +67,6 @@ const SECTION_TEMPLATES = [
   {
     id: "landmarks",
     title: "Must-See Landmarks",
-    icon: <MapPin className="h-5 w-5" />,
     activities: [
       {
         name: "Landmarks",
@@ -100,7 +78,6 @@ const SECTION_TEMPLATES = [
   {
     id: "photography",
     title: "Photography Spots",
-    icon: <Camera className="h-5 w-5" />,
     activities: [
       {
         name: "Photo Locations",
@@ -111,7 +88,6 @@ const SECTION_TEMPLATES = [
   {
     id: "transport",
     title: "Transportation",
-    icon: <Car className="h-5 w-5" />,
     activities: [
       {
         name: "Transport Options",
@@ -123,12 +99,16 @@ const SECTION_TEMPLATES = [
 ];
 
 // Now, let's add state for custom section creation
-export function TripSections({ tripId }: CustomSectionsProps) {
-  const [sections, setSections] = useState<SectionType[]>([]);
+export function TripSections({
+  tripId,
+  place,
+  thingsToDo,
+  setThingsToDo,
+  onSectionAdded,
+}: CustomSectionsProps) {
+  const [sections, setSections] = useState<ThingsToDo[]>([]);
   const [open, setOpen] = useState(false);
-  const [editingSection, setEditingSection] = useState<SectionType | null>(
-    null
-  );
+  const [editingSection, setEditingSection] = useState<ThingsToDo | null>(null);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [editContent, setEditContent] = useState("");
   const [editName, setEditName] = useState("");
@@ -144,6 +124,27 @@ export function TripSections({ tripId }: CustomSectionsProps) {
 
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (thingsToDo && thingsToDo.length > 0) {
+      setSections(thingsToDo);
+    }
+  }, [thingsToDo]);
+
+  useEffect(() => {
+    // Only update parent if sections have actually changed and are different from thingsToDo
+    const sectionsJSON = JSON.stringify(sections);
+    const thingsToDoJSON = JSON.stringify(thingsToDo);
+
+    if (sectionsJSON !== thingsToDoJSON) {
+      setThingsToDo(sections);
+
+      // If onSectionAdded is provided, call it to update the parent component
+      if (onSectionAdded) {
+        onSectionAdded();
+      }
+    }
+  }, [sections, setThingsToDo, thingsToDo, onSectionAdded]);
+
   // Update the addSection function
   const addSection = async (template: (typeof SECTION_TEMPLATES)[0]) => {
     const newSection = {
@@ -151,8 +152,15 @@ export function TripSections({ tripId }: CustomSectionsProps) {
       id: `${template.id}-${Date.now()}`, // Ensure unique ID
     };
 
-    setSections([...sections, newSection]);
+    const updatedSections = [...sections, newSection];
+    setSections(updatedSections);
+    setThingsToDo(updatedSections); // Directly update parent state
     setOpen(false);
+
+    // Call onSectionAdded if provided
+    if (onSectionAdded) {
+      await onSectionAdded();
+    }
 
     // Set the generating section ID
     setGeneratingSectionId(newSection.id);
@@ -160,12 +168,13 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     // Generate AI content for the template section
     try {
       setIsGenerating(true);
-      const response = await api.post<{ activity: string }, ThingsToDo>(
-        `/app/trip/${tripId}/section/generate`,
-        {
-          activity: template.title,
-        }
-      );
+      const response = await api.post<
+        { activity: string; place: string },
+        ThingsToDo
+      >(`/app/trip/${tripId}/section/generate`, {
+        activity: template.title,
+        place: place,
+      });
 
       if (response.activities && response.activities.length > 0) {
         // Update the section with the generated activities
@@ -183,11 +192,6 @@ export function TripSections({ tripId }: CustomSectionsProps) {
             return section;
           })
         );
-
-        toast({
-          title: "Content Generated",
-          description: "AI has created content for your new section.",
-        });
       }
     } catch (error) {
       toast({
@@ -216,7 +220,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     const newSection = {
       id: `custom-${Date.now()}`,
       title: customSectionTitle,
-      icon: <Sparkles className="h-5 w-5" />,
+      icon: getSectionIcon(customSectionTitle),
       activities: [
         {
           name: "New Activity",
@@ -225,10 +229,17 @@ export function TripSections({ tripId }: CustomSectionsProps) {
       ],
     };
 
-    setSections([...sections, newSection]);
+    const updatedSections = [...sections, newSection];
+    setSections(updatedSections);
+    setThingsToDo(updatedSections); // Directly update parent state
     setCustomSectionTitle("");
     setIsCreatingCustom(false);
     setOpen(false);
+
+    // Call onSectionAdded if provided
+    if (onSectionAdded) {
+      await onSectionAdded();
+    }
 
     // Set the generating section ID
     setGeneratingSectionId(newSection.id);
@@ -236,12 +247,13 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     // Generate AI content for the new section
     try {
       setIsGenerating(true);
-      const response = await api.post<{ activity: string }, ThingsToDo>(
-        `/app/trip/${tripId}/section/generate`,
-        {
-          activity: customSectionTitle,
-        }
-      );
+      const response = await api.post<
+        { activity: string; place: string },
+        ThingsToDo
+      >(`/app/trip/${tripId}/section/generate`, {
+        activity: customSectionTitle,
+        place: place,
+      });
 
       if (response.activities && response.activities.length > 0) {
         // Update the section with the generated activities
@@ -283,7 +295,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
   };
 
   // Update the openEditDialog function
-  const openEditDialog = (section: SectionType, activity: Activity) => {
+  const openEditDialog = (section: ThingsToDo, activity: Activity) => {
     setEditingSection(section);
     setEditingActivity(activity);
     setEditName(activity.name);
@@ -327,13 +339,13 @@ export function TripSections({ tripId }: CustomSectionsProps) {
     setIsGenerating(true);
 
     try {
-      // Call the API endpoint with the trip ID and section type
-      const response = await api.post<{ activity: string }, ThingsToDo>(
-        `/app/trip/${tripId}/section/generate`,
-        {
-          activity: editingSection.title,
-        }
-      );
+      const response = await api.post<
+        { activity: string; place: string },
+        ThingsToDo
+      >(`/app/trip/${tripId}/section/generate`, {
+        activity: customSectionTitle,
+        place: place,
+      });
 
       if (response.activities && response.activities.length > 0) {
         setEditContent(response.activities[0].description || "");
@@ -395,7 +407,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
   // Now, let's update the CardContent section to increase height and ensure proper scrolling
   return (
     <>
-      <Card className="mb-6">
+      <Card>
         <CardHeader>
           <CardTitle className="text-lg flex justify-between items-center">
             <span>What would you do on your Trip?</span>
@@ -413,7 +425,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add Custom Section</DialogTitle>
+                  <DialogTitle>Add Things to do</DialogTitle>
                 </DialogHeader>
                 {isCreatingCustom ? (
                   <div className="py-4 space-y-4">
@@ -460,7 +472,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                             isGenerating || generatingSectionId !== null
                           }
                         >
-                          {template.icon}
+                          {getSectionIcon(template.title)}
                           <span>{template.title}</span>
                         </Button>
                       ))}
@@ -512,7 +524,7 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                       {generatingSectionId === section.id ? (
                         <Loader2 className="h-5 w-5 animate-spin text-primary" />
                       ) : (
-                        section.icon
+                        getSectionIcon(section.title)
                       )}
                       <h3 className="font-medium">{section.title}</h3>
                       {generatingSectionId === section.id && (
@@ -547,16 +559,20 @@ export function TripSections({ tripId }: CustomSectionsProps) {
                               {activity.description}
                             </ReactMarkdown>
                           </div>
-                          <Button
-                            variant="link"
-                            className="p-0 h-auto mt-1 text-sm"
-                            onClick={() => openEditDialog(section, activity)}
-                            disabled={generatingSectionId === section.id}
-                          >
-                            Edit activity
-                          </Button>
+                          <div className="mt-2">
+                            <Button
+                              variant="link"
+                              className="p-0 h-auto mt-1 text-sm"
+                              onClick={() => openEditDialog(section, activity)}
+                              disabled={generatingSectionId === section.id}
+                            >
+                              <Edit className="h-3 w-3 mr-1" />
+                              Edit activity
+                            </Button>
+                          </div>
                         </div>
                       ))}
+
                       <Button
                         variant="outline"
                         size="sm"
@@ -576,56 +592,23 @@ export function TripSections({ tripId }: CustomSectionsProps) {
         </CardContent>
       </Card>
 
-      {/* Update the Dialog content to include activity name editing */}
-      <Dialog
-        open={isEditing}
-        onOpenChange={(open) => !open && setIsEditing(false)}
-      >
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editingSection?.title} - Edit Activity</DialogTitle>
-          </DialogHeader>
-
-          <div className="py-4 space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="activity-name" className="text-sm font-medium">
-                Activity Name
-              </label>
-              <input
-                id="activity-name"
-                className="w-full p-2 border rounded-md"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Activity Description
-              </label>
-              <MarkdownEditor value={editContent} onChange={setEditContent} />
-            </div>
-          </div>
-
-          <DialogFooter className="flex items-center justify-between sm:justify-between">
-            <Button
-              variant="outline"
-              onClick={generateAIContent}
-              disabled={isGenerating}
-              className="flex items-center gap-2"
-            >
-              <Sparkles className="h-4 w-4" />
-              {isGenerating ? "Generating..." : "Generate with AI"}
-            </Button>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setIsEditing(false)}>
-                Cancel
-              </Button>
-              <Button onClick={saveEditedContent}>Save Changes</Button>
-            </div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EditActivityDialog
+        isOpen={isEditing}
+        onClose={() => setIsEditing(false)}
+        title={editingSection?.title || ""}
+        editName={editName}
+        setEditName={setEditName}
+        editContent={editContent}
+        setEditContent={setEditContent}
+        onSave={async () => {
+          saveEditedContent();
+          return Promise.resolve();
+        }}
+        onGenerateAI={async () => {
+          return generateAIContent();
+        }}
+        isGenerating={isGenerating}
+      />
     </>
   );
 }

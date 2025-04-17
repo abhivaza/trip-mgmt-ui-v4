@@ -1,4 +1,4 @@
-import { PopularDestinations } from "@/components/popular-destinations";
+// import { PopularDestinations } from "@/components/popular-destinations";
 import { GenerateItinerary } from "@/components/generate-itinerary";
 import FeatureSection from "@/components/feature-section";
 
@@ -13,7 +13,6 @@ export default function Home() {
       </p>
 
       <GenerateItinerary />
-      <PopularDestinations />
       <FeatureSection />
     </main>
   );

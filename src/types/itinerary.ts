@@ -1,23 +1,25 @@
 export interface ItineraryResponse {
-  id: string;
-  message: string;
-  city: string;
-  country: string;
-  popularityRank: number;
-  tags: string[];
-  itinerary: ItineraryDayActivity[];
-  createdBy: string;
-  fromDate: string;
-  tripDuration: number;
-  imageURL: string;
+  id?: string;
+  message?: string;
+  city?: string;
+  country?: string;
+  popularityRank?: number;
+  tags?: string[];
+  itinerary?: ItineraryDayActivity[];
+  createdBy?: string;
+  fromDate?: string;
+  tripDuration?: number;
+  imageURL?: string;
 }
 
 export interface ItineraryDayActivity {
-  activities: string[];
   dayNumber: number;
   date: string;
+  place: string;
   title: string;
+  shortDescription: string;
   description: string;
+  thingsToDo?: ThingsToDo[];
 }
 
 export interface ThingsToDo {
