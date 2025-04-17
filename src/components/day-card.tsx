@@ -87,11 +87,6 @@ export const DayCard = ({
         if (editingSection) {
           setIsEditing(false);
         }
-
-        toast({
-          title: "Success",
-          description: "Activities updated successfully",
-        });
       }
     } catch (error) {
       console.error("Error saving activities:", error);
@@ -135,11 +130,6 @@ export const DayCard = ({
 
           // Call API to update the itinerary
           await api.put(`/app/trip/${tripId}`, updatedItinerary);
-
-          toast({
-            title: "Success",
-            description: "Itinerary content updated successfully",
-          });
         }
       }
     } catch (error) {
@@ -171,7 +161,7 @@ export const DayCard = ({
         <CardDescription>{day.shortDescription}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col gap-6">
           <div className="flex-1">
             <div className="mb-2">
               <h3 className="font-semibold">Activities:</h3>
@@ -195,8 +185,10 @@ export const DayCard = ({
               tripId={tripId}
               place={day.place}
               thingsToDo={day.thingsToDo || []}
-              setThingsToDo={setThingsToDo}
-              onSectionAdded={saveEditedContent}
+              setThingsToDo={(thingsToDo) => {
+                setThingsToDo(thingsToDo);
+                saveEditedContent();
+              }}
             />
           </div>
         </div>

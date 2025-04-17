@@ -26,7 +26,6 @@ interface CustomSectionsProps {
   place: string;
   thingsToDo: ThingsToDo[];
   setThingsToDo: (thingsToDo: ThingsToDo[]) => void;
-  onSectionAdded?: () => Promise<void>;
 }
 
 // First, let's update the SECTION_TEMPLATES array to include a custom option
@@ -36,7 +35,7 @@ const SECTION_TEMPLATES = [
     title: "Hiking Plan",
     activities: [
       {
-        name: "Hiking Trails",
+        title: "Hiking Trails",
         description:
           "Add details about hiking trails, difficulty levels, and required gear.",
       },
@@ -47,7 +46,7 @@ const SECTION_TEMPLATES = [
     title: "Dining Plan",
     activities: [
       {
-        name: "Restaurants",
+        title: "Restaurants",
         description:
           "List restaurants to visit, local cuisines to try, and reservation details.",
       },
@@ -58,7 +57,7 @@ const SECTION_TEMPLATES = [
     title: "Trending Reels",
     activities: [
       {
-        name: "Popular Spots",
+        title: "Popular Spots",
         description:
           "Popular spots for photos and videos, trending locations from social media.",
       },
@@ -69,7 +68,7 @@ const SECTION_TEMPLATES = [
     title: "Must-See Landmarks",
     activities: [
       {
-        name: "Landmarks",
+        title: "Landmarks",
         description:
           "Important landmarks and attractions you don't want to miss.",
       },
@@ -80,7 +79,7 @@ const SECTION_TEMPLATES = [
     title: "Photography Spots",
     activities: [
       {
-        name: "Photo Locations",
+        title: "Photo Locations",
         description: "Best locations and times for taking memorable photos.",
       },
     ],
@@ -90,7 +89,7 @@ const SECTION_TEMPLATES = [
     title: "Transportation",
     activities: [
       {
-        name: "Transport Options",
+        title: "Transport Options",
         description:
           "Local transportation options, rental information, and navigation tips.",
       },
@@ -104,7 +103,6 @@ export function TripSections({
   place,
   thingsToDo,
   setThingsToDo,
-  onSectionAdded,
 }: CustomSectionsProps) {
   const [sections, setSections] = useState<ThingsToDo[]>([]);
   const [open, setOpen] = useState(false);
@@ -137,13 +135,8 @@ export function TripSections({
 
     if (sectionsJSON !== thingsToDoJSON) {
       setThingsToDo(sections);
-
-      // If onSectionAdded is provided, call it to update the parent component
-      if (onSectionAdded) {
-        onSectionAdded();
-      }
     }
-  }, [sections, setThingsToDo, thingsToDo, onSectionAdded]);
+  }, [sections, setThingsToDo, thingsToDo]);
 
   // Update the addSection function
   const addSection = async (template: (typeof SECTION_TEMPLATES)[0]) => {
@@ -156,11 +149,6 @@ export function TripSections({
     setSections(updatedSections);
     setThingsToDo(updatedSections); // Directly update parent state
     setOpen(false);
-
-    // Call onSectionAdded if provided
-    if (onSectionAdded) {
-      await onSectionAdded();
-    }
 
     // Set the generating section ID
     setGeneratingSectionId(newSection.id);
@@ -183,8 +171,9 @@ export function TripSections({
             if (section.id === newSection.id) {
               return {
                 ...section,
+                title: response.title,
                 activities: response.activities.map((activity) => ({
-                  name: activity.name || "Activity",
+                  title: activity.title || "Activity",
                   description: activity.description || "",
                 })),
               };
@@ -223,7 +212,7 @@ export function TripSections({
       icon: getSectionIcon(customSectionTitle),
       activities: [
         {
-          name: "New Activity",
+          title: "New Activity",
           description: "Add details for this activity.",
         },
       ],
@@ -235,11 +224,6 @@ export function TripSections({
     setCustomSectionTitle("");
     setIsCreatingCustom(false);
     setOpen(false);
-
-    // Call onSectionAdded if provided
-    if (onSectionAdded) {
-      await onSectionAdded();
-    }
 
     // Set the generating section ID
     setGeneratingSectionId(newSection.id);
@@ -262,8 +246,9 @@ export function TripSections({
             if (section.id === newSection.id) {
               return {
                 ...section,
+                title: response.title,
                 activities: response.activities.map((activity) => ({
-                  name: activity.name || "Activity",
+                  title: activity.title || "Activity",
                   description: activity.description || "",
                 })),
               };
@@ -298,7 +283,7 @@ export function TripSections({
   const openEditDialog = (section: ThingsToDo, activity: Activity) => {
     setEditingSection(section);
     setEditingActivity(activity);
-    setEditName(activity.name);
+    setEditName(activity.title);
     setEditContent(activity.description);
     setIsEditing(true);
   };
@@ -313,9 +298,9 @@ export function TripSections({
           return {
             ...section,
             activities: section.activities.map((activity) => {
-              if (activity.name === editingActivity.name) {
+              if (activity.title === editingActivity.title) {
                 return {
-                  name: editName,
+                  title: editName,
                   description: editContent,
                 };
               }
@@ -376,7 +361,7 @@ export function TripSections({
             activities: [
               ...section.activities,
               {
-                name: `New Activity ${section.activities.length + 1}`,
+                title: `New Activity ${section.activities.length + 1}`,
                 description: "Add details for this activity.",
               },
             ],
@@ -395,7 +380,7 @@ export function TripSections({
           return {
             ...section,
             activities: section.activities.filter(
-              (activity) => activity.name !== activityName
+              (activity) => activity.title !== activityName
             ),
           };
         }
@@ -539,14 +524,14 @@ export function TripSections({
                         <div key={index} className="border-l-2 pl-3 py-1">
                           <div className="flex justify-between items-start">
                             <h4 className="font-medium text-sm">
-                              {activity.name}
+                              {activity.title}
                             </h4>
                             <Button
                               variant="ghost"
                               size="sm"
                               className="h-6 w-6 p-0"
                               onClick={() =>
-                                removeActivity(section.id, activity.name)
+                                removeActivity(section.id, activity.title)
                               }
                               disabled={generatingSectionId === section.id}
                             >
