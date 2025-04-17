@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, X, Sparkles, Loader2, Edit } from "lucide-react";
+import { Plus, X, Loader2, Edit } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -137,8 +137,13 @@ export function TripSections({
 
     if (sectionsJSON !== thingsToDoJSON) {
       setThingsToDo(sections);
+
+      // If onSectionAdded is provided, call it to update the parent component
+      if (onSectionAdded) {
+        onSectionAdded();
+      }
     }
-  }, [sections, setThingsToDo, thingsToDo]);
+  }, [sections, setThingsToDo, thingsToDo, onSectionAdded]);
 
   // Update the addSection function
   const addSection = async (template: (typeof SECTION_TEMPLATES)[0]) => {
@@ -147,7 +152,9 @@ export function TripSections({
       id: `${template.id}-${Date.now()}`, // Ensure unique ID
     };
 
-    setSections([...sections, newSection]);
+    const updatedSections = [...sections, newSection];
+    setSections(updatedSections);
+    setThingsToDo(updatedSections); // Directly update parent state
     setOpen(false);
 
     // Call onSectionAdded if provided
@@ -222,7 +229,9 @@ export function TripSections({
       ],
     };
 
-    setSections([...sections, newSection]);
+    const updatedSections = [...sections, newSection];
+    setSections(updatedSections);
+    setThingsToDo(updatedSections); // Directly update parent state
     setCustomSectionTitle("");
     setIsCreatingCustom(false);
     setOpen(false);

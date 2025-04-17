@@ -66,7 +66,7 @@ export const DayCard = ({
         ...day,
         title: editingSection ? editName : day.title,
         description: editingSection ? editContent : day.description,
-        thingsToDo: thingsToDo,
+        thingsToDo: thingsToDo, // This is correctly using the current thingsToDo state
       };
 
       // Create a copy of the current itinerary
