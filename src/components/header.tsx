@@ -41,7 +41,7 @@ export default function Header() {
               <>
                 <Link
                   href="/app/trips"
-                  className="hidden md:flex text-sm font-medium hover:text-primary transition-colors"
+                  className="text-sm font-medium hover:text-primary transition-colors"
                 >
                   My Trips
                 </Link>
