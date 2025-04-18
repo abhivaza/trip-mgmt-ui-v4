@@ -269,7 +269,7 @@ export function TripSections({
     setIsEditing(true);
   };
 
-  const saveEditedContent = () => {
+  const saveEditedContent = async () => {
     if (!editingSection || !editingActivity) return;
 
     setSections(
@@ -558,8 +558,7 @@ export function TripSections({
         editContent={editContent}
         setEditContent={setEditContent}
         onSave={async () => {
-          saveEditedContent();
-          return Promise.resolve();
+          return saveEditedContent();
         }}
         onGenerateAI={async () => {
           return generateAIContent();
