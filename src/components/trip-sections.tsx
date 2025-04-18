@@ -307,7 +307,7 @@ export function TripSections({
         { activity: string; place: string; specialRequest: string },
         Activity
       >(`/app/trip/${tripId}/section/activity/generate`, {
-        activity: editingActivity.title,
+        activity: editingSection.title,
         place: place,
         specialRequest: specialRequest,
       });

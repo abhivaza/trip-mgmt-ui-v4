@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import {
   MDXEditor,
   headingsPlugin,
@@ -21,6 +21,12 @@ interface MarkdownEditorProps {
 
 export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
   const editorRef = useRef<MDXEditorMethods>(null);
+
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.getMarkdown() !== value) {
+      editorRef.current.setMarkdown(value);
+    }
+  }, [value]);
 
   return (
     <div className="border rounded-md">
