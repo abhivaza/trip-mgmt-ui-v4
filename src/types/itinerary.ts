@@ -29,6 +29,6 @@ export interface ThingsToDo {
 }
 
 export interface Activity {
-  name: string;
+  title: string;
   description: string;
 }

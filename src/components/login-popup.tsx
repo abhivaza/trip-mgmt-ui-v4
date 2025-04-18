@@ -72,7 +72,6 @@ export default function LoginPopup({
 
     try {
       if (!enablePasswordAuth) {
-        // If password auth is disabled, use magic link instead
         await handleMagicLink();
         return;
       }
@@ -143,7 +142,7 @@ export default function LoginPopup({
     } catch (error) {
       console.error(error);
       setError(
-        error instanceof Error ? error.message : "Failed to send magic link"
+        error instanceof Error ? error.message : "Failed to send sign in link"
       );
     } finally {
       setLoading(false);
@@ -242,7 +241,7 @@ export default function LoginPopup({
 
             {magicLinkSent ? (
               <div className="text-center space-y-4">
-                <p>Magic link sent! Check your email to complete sign-in.</p>
+                <p>Sign in link sent! Check your email to complete sign-in.</p>
                 <Button
                   variant="outline"
                   onClick={() => setMagicLinkSent(false)}
@@ -385,7 +384,7 @@ export default function LoginPopup({
                   onClick={handleMagicLink}
                   disabled={loading}
                 >
-                  Sign in with Magic Link
+                  Send me a link to Sign in
                 </Button>
               </form>
             )}

@@ -19,24 +19,20 @@ import type { Activity, ThingsToDo } from "@/types/itinerary";
 import { EditActivityDialog } from "./edit-activity-dialog";
 import { getSectionIcon } from "./get-section-icon";
 
-// Update the SectionType to match the new structure
-
 interface CustomSectionsProps {
   tripId: string;
   place: string;
   thingsToDo: ThingsToDo[];
   setThingsToDo: (thingsToDo: ThingsToDo[]) => void;
-  onSectionAdded?: () => Promise<void>;
 }
 
-// First, let's update the SECTION_TEMPLATES array to include a custom option
 const SECTION_TEMPLATES = [
   {
     id: "hiking",
     title: "Hiking Plan",
     activities: [
       {
-        name: "Hiking Trails",
+        title: "Hiking Trails",
         description:
           "Add details about hiking trails, difficulty levels, and required gear.",
       },
@@ -47,7 +43,7 @@ const SECTION_TEMPLATES = [
     title: "Dining Plan",
     activities: [
       {
-        name: "Restaurants",
+        title: "Restaurants",
         description:
           "List restaurants to visit, local cuisines to try, and reservation details.",
       },
@@ -58,7 +54,7 @@ const SECTION_TEMPLATES = [
     title: "Trending Reels",
     activities: [
       {
-        name: "Popular Spots",
+        title: "Popular Spots",
         description:
           "Popular spots for photos and videos, trending locations from social media.",
       },
@@ -69,7 +65,7 @@ const SECTION_TEMPLATES = [
     title: "Must-See Landmarks",
     activities: [
       {
-        name: "Landmarks",
+        title: "Landmarks",
         description:
           "Important landmarks and attractions you don't want to miss.",
       },
@@ -80,7 +76,7 @@ const SECTION_TEMPLATES = [
     title: "Photography Spots",
     activities: [
       {
-        name: "Photo Locations",
+        title: "Photo Locations",
         description: "Best locations and times for taking memorable photos.",
       },
     ],
@@ -90,7 +86,7 @@ const SECTION_TEMPLATES = [
     title: "Transportation",
     activities: [
       {
-        name: "Transport Options",
+        title: "Transport Options",
         description:
           "Local transportation options, rental information, and navigation tips.",
       },
@@ -98,13 +94,11 @@ const SECTION_TEMPLATES = [
   },
 ];
 
-// Now, let's add state for custom section creation
 export function TripSections({
   tripId,
   place,
   thingsToDo,
   setThingsToDo,
-  onSectionAdded,
 }: CustomSectionsProps) {
   const [sections, setSections] = useState<ThingsToDo[]>([]);
   const [open, setOpen] = useState(false);
@@ -114,9 +108,9 @@ export function TripSections({
   const [editName, setEditName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  // Add new state for custom section creation
   const [customSectionTitle, setCustomSectionTitle] = useState("");
   const [isCreatingCustom, setIsCreatingCustom] = useState(false);
+  const [specialRequest, setSpecialRequest] = useState("");
   const api = useApi();
   const [generatingSectionId, setGeneratingSectionId] = useState<string | null>(
     null
@@ -131,41 +125,27 @@ export function TripSections({
   }, [thingsToDo]);
 
   useEffect(() => {
-    // Only update parent if sections have actually changed and are different from thingsToDo
     const sectionsJSON = JSON.stringify(sections);
     const thingsToDoJSON = JSON.stringify(thingsToDo);
 
     if (sectionsJSON !== thingsToDoJSON) {
       setThingsToDo(sections);
-
-      // If onSectionAdded is provided, call it to update the parent component
-      if (onSectionAdded) {
-        onSectionAdded();
-      }
     }
-  }, [sections, setThingsToDo, thingsToDo, onSectionAdded]);
+  }, [sections, setThingsToDo, thingsToDo]);
 
-  // Update the addSection function
   const addSection = async (template: (typeof SECTION_TEMPLATES)[0]) => {
     const newSection = {
       ...template,
-      id: `${template.id}-${Date.now()}`, // Ensure unique ID
+      id: `${template.id}-${Date.now()}`,
     };
 
     const updatedSections = [...sections, newSection];
     setSections(updatedSections);
-    setThingsToDo(updatedSections); // Directly update parent state
+    setThingsToDo(updatedSections);
     setOpen(false);
 
-    // Call onSectionAdded if provided
-    if (onSectionAdded) {
-      await onSectionAdded();
-    }
-
-    // Set the generating section ID
     setGeneratingSectionId(newSection.id);
 
-    // Generate AI content for the template section
     try {
       setIsGenerating(true);
       const response = await api.post<
@@ -177,14 +157,14 @@ export function TripSections({
       });
 
       if (response.activities && response.activities.length > 0) {
-        // Update the section with the generated activities
         setSections((prevSections) =>
           prevSections.map((section) => {
             if (section.id === newSection.id) {
               return {
                 ...section,
+                title: response.title,
                 activities: response.activities.map((activity) => ({
-                  name: activity.name || "Activity",
+                  title: activity.title || "Activity",
                   description: activity.description || "",
                 })),
               };
@@ -206,7 +186,6 @@ export function TripSections({
     }
   };
 
-  // Add a function to create a custom section
   const addCustomSection = async () => {
     if (!customSectionTitle.trim()) {
       toast({
@@ -223,7 +202,7 @@ export function TripSections({
       icon: getSectionIcon(customSectionTitle),
       activities: [
         {
-          name: "New Activity",
+          title: "New Activity",
           description: "Add details for this activity.",
         },
       ],
@@ -231,20 +210,13 @@ export function TripSections({
 
     const updatedSections = [...sections, newSection];
     setSections(updatedSections);
-    setThingsToDo(updatedSections); // Directly update parent state
+    setThingsToDo(updatedSections);
     setCustomSectionTitle("");
     setIsCreatingCustom(false);
     setOpen(false);
 
-    // Call onSectionAdded if provided
-    if (onSectionAdded) {
-      await onSectionAdded();
-    }
-
-    // Set the generating section ID
     setGeneratingSectionId(newSection.id);
 
-    // Generate AI content for the new section
     try {
       setIsGenerating(true);
       const response = await api.post<
@@ -256,14 +228,14 @@ export function TripSections({
       });
 
       if (response.activities && response.activities.length > 0) {
-        // Update the section with the generated activities
         setSections((prevSections) =>
           prevSections.map((section) => {
             if (section.id === newSection.id) {
               return {
                 ...section,
+                title: response.title,
                 activities: response.activities.map((activity) => ({
-                  name: activity.name || "Activity",
+                  title: activity.title || "Activity",
                   description: activity.description || "",
                 })),
               };
@@ -271,11 +243,6 @@ export function TripSections({
             return section;
           })
         );
-
-        toast({
-          title: "Content Generated",
-          description: "AI has created content for your new section.",
-        });
       }
     } catch (error) {
       toast({
@@ -294,17 +261,15 @@ export function TripSections({
     setSections(sections.filter((section) => section.id !== id));
   };
 
-  // Update the openEditDialog function
   const openEditDialog = (section: ThingsToDo, activity: Activity) => {
     setEditingSection(section);
     setEditingActivity(activity);
-    setEditName(activity.name);
+    setEditName(activity.title);
     setEditContent(activity.description);
     setIsEditing(true);
   };
 
-  // Update the saveEditedContent function
-  const saveEditedContent = () => {
+  const saveEditedContent = async () => {
     if (!editingSection || !editingActivity) return;
 
     setSections(
@@ -313,9 +278,9 @@ export function TripSections({
           return {
             ...section,
             activities: section.activities.map((activity) => {
-              if (activity.name === editingActivity.name) {
+              if (activity.title === editingActivity.title) {
                 return {
-                  name: editName,
+                  title: editName,
                   description: editContent,
                 };
               }
@@ -332,7 +297,6 @@ export function TripSections({
     setEditingActivity(null);
   };
 
-  // Update the generateAIContent function
   const generateAIContent = async () => {
     if (!editingSection || !editingActivity) return;
 
@@ -340,19 +304,16 @@ export function TripSections({
 
     try {
       const response = await api.post<
-        { activity: string; place: string },
-        ThingsToDo
-      >(`/app/trip/${tripId}/section/generate`, {
-        activity: customSectionTitle,
+        { activity: string; place: string; specialRequest: string },
+        Activity
+      >(`/app/trip/${tripId}/section/activity/generate`, {
+        activity: editingSection.title,
         place: place,
+        specialRequest: specialRequest,
       });
 
-      if (response.activities && response.activities.length > 0) {
-        setEditContent(response.activities[0].description || "");
-        toast({
-          title: "Content Generated",
-          description: "AI has created content for your activity.",
-        });
+      if (response) {
+        setEditContent(response.description || "");
       }
     } catch (error) {
       toast({
@@ -366,7 +327,6 @@ export function TripSections({
     }
   };
 
-  // Add a function to add a new activity to a section
   const addActivity = (sectionId: string) => {
     setSections(
       sections.map((section) => {
@@ -376,7 +336,7 @@ export function TripSections({
             activities: [
               ...section.activities,
               {
-                name: `New Activity ${section.activities.length + 1}`,
+                title: `New Activity ${section.activities.length + 1}`,
                 description: "Add details for this activity.",
               },
             ],
@@ -387,7 +347,6 @@ export function TripSections({
     );
   };
 
-  // Add a function to remove an activity from a section
   const removeActivity = (sectionId: string, activityName: string) => {
     setSections(
       sections.map((section) => {
@@ -395,7 +354,7 @@ export function TripSections({
           return {
             ...section,
             activities: section.activities.filter(
-              (activity) => activity.name !== activityName
+              (activity) => activity.title !== activityName
             ),
           };
         }
@@ -404,12 +363,11 @@ export function TripSections({
     );
   };
 
-  // Now, let's update the CardContent section to increase height and ensure proper scrolling
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex justify-between items-center">
+          <CardTitle className="text-md flex justify-between items-center">
             <span>What would you do on your Trip?</span>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
@@ -495,14 +453,13 @@ export function TripSections({
         </CardHeader>
         <CardContent>
           {sections.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground">
+            <div className="text-center text-muted-foreground">
               <p>
                 Add things to do as per your preference and interests. Use AI to
                 generate starter content.
               </p>
             </div>
           ) : (
-            // Increase the max height of the ScrollArea to show more content
             <ScrollArea className="h-[500px] pr-3">
               <div className="space-y-4">
                 {sections.map((section) => (
@@ -539,14 +496,14 @@ export function TripSections({
                         <div key={index} className="border-l-2 pl-3 py-1">
                           <div className="flex justify-between items-start">
                             <h4 className="font-medium text-sm">
-                              {activity.name}
+                              {activity.title}
                             </h4>
                             <Button
                               variant="ghost"
                               size="sm"
                               className="h-6 w-6 p-0"
                               onClick={() =>
-                                removeActivity(section.id, activity.name)
+                                removeActivity(section.id, activity.title)
                               }
                               disabled={generatingSectionId === section.id}
                             >
@@ -601,13 +558,14 @@ export function TripSections({
         editContent={editContent}
         setEditContent={setEditContent}
         onSave={async () => {
-          saveEditedContent();
-          return Promise.resolve();
+          return saveEditedContent();
         }}
         onGenerateAI={async () => {
           return generateAIContent();
         }}
         isGenerating={isGenerating}
+        specialRequest={specialRequest}
+        setSpecialRequest={setSpecialRequest}
       />
     </>
   );

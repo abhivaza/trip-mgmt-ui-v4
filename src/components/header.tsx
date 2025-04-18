@@ -36,25 +36,12 @@ export default function Header() {
             <CompanyLogo />
           </Link>
           <div className="flex items-center space-x-4">
-            <nav className="hidden md:flex space-x-4">
-              <Link
-                href="#features"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Features
-              </Link>
-              <Link
-                href="#explore"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Explore trips
-              </Link>
-            </nav>
+            <nav className="hidden md:flex space-x-4"></nav>
             {user ? (
               <>
                 <Link
                   href="/app/trips"
-                  className="hidden md:flex text-sm font-medium hover:text-primary transition-colors"
+                  className="text-sm font-medium hover:text-primary transition-colors"
                 >
                   My Trips
                 </Link>
@@ -69,18 +56,29 @@ export default function Header() {
                 >
                   <LogIn className="mr-2 h-4 w-4" /> Logout
                 </Button>
+                <MobileMenu
+                  signOut={signOut}
+                  openLoginDialog={openLoginDialog}
+                />
               </>
             ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                className="hidden md:flex items-center"
-                onClick={openLoginDialog}
-              >
-                <LogIn className="mr-2 h-4 w-4" /> Login
-              </Button>
+              <>
+                <Link
+                  href="#features"
+                  className="hidden md:flex text-sm font-medium hover:text-primary transition-colors"
+                >
+                  Features
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="items-center"
+                  onClick={openLoginDialog}
+                >
+                  <LogIn className="mr-2 h-4 w-4" /> Login
+                </Button>
+              </>
             )}
-            <MobileMenu signOut={signOut} openLoginDialog={openLoginDialog} />
           </div>
         </div>
       </div>

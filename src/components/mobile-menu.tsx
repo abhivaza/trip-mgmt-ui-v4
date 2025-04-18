@@ -45,7 +45,7 @@ export default function MobileMenu({
               </div>
               <Link
                 href="/app/trips"
-                className="px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
+                className="hidden px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
                 onClick={handleLinkClick}
               >
                 My Trips
