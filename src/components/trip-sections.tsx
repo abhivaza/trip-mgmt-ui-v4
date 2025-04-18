@@ -115,6 +115,7 @@ export function TripSections({
   // Add new state for custom section creation
   const [customSectionTitle, setCustomSectionTitle] = useState("");
   const [isCreatingCustom, setIsCreatingCustom] = useState(false);
+  const [specialRequest, setSpecialRequest] = useState("");
   const api = useApi();
   const [generatingSectionId, setGeneratingSectionId] = useState<string | null>(
     null
@@ -256,11 +257,6 @@ export function TripSections({
             return section;
           })
         );
-
-        toast({
-          title: "Content Generated",
-          description: "AI has created content for your new section.",
-        });
       }
     } catch (error) {
       toast({
@@ -325,19 +321,16 @@ export function TripSections({
 
     try {
       const response = await api.post<
-        { activity: string; place: string },
-        ThingsToDo
-      >(`/app/trip/${tripId}/section/generate`, {
-        activity: customSectionTitle,
+        { activity: string; place: string; specialRequest: string },
+        Activity
+      >(`/app/trip/${tripId}/section/activity/generate`, {
+        activity: editingActivity.title,
         place: place,
+        specialRequest: specialRequest,
       });
 
-      if (response.activities && response.activities.length > 0) {
-        setEditContent(response.activities[0].description || "");
-        toast({
-          title: "Content Generated",
-          description: "AI has created content for your activity.",
-        });
+      if (response) {
+        setEditContent(response.description || "");
       }
     } catch (error) {
       toast({
@@ -593,6 +586,8 @@ export function TripSections({
           return generateAIContent();
         }}
         isGenerating={isGenerating}
+        specialRequest={specialRequest}
+        setSpecialRequest={setSpecialRequest}
       />
     </>
   );

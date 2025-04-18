@@ -22,6 +22,8 @@ interface EditActivityDialogProps {
   onSave: () => Promise<void>;
   onGenerateAI: () => Promise<void>;
   isGenerating: boolean;
+  specialRequest?: string;
+  setSpecialRequest?: (request: string) => void;
 }
 
 export const EditActivityDialog = ({
@@ -35,6 +37,8 @@ export const EditActivityDialog = ({
   onSave,
   onGenerateAI,
   isGenerating,
+  specialRequest,
+  setSpecialRequest,
 }: EditActivityDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -56,23 +60,33 @@ export const EditActivityDialog = ({
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-[400px] overflow-y-auto">
             <label className="text-sm font-medium">Activity Description</label>
             <MarkdownEditor value={editContent} onChange={setEditContent} />
           </div>
         </div>
 
-        <DialogFooter className="flex items-center justify-between sm:justify-between">
-          <Button
-            variant="outline"
-            onClick={onGenerateAI}
-            disabled={isGenerating}
-            className="flex items-center gap-2"
-          >
-            <Sparkles className="h-4 w-4" />
-            {isGenerating ? "Generating..." : "Generate with AI"}
-          </Button>
-          <div className="flex gap-2">
+        <DialogFooter className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+            <input
+              type="text"
+              placeholder="Special request for AI..."
+              className="w-full sm:w-auto p-2 text-sm border rounded-md"
+              value={specialRequest || ""}
+              onChange={(e) => setSpecialRequest?.(e.target.value)}
+              disabled={isGenerating}
+            />
+            <Button
+              variant="outline"
+              onClick={onGenerateAI}
+              disabled={isGenerating}
+              className="flex items-center gap-2 w-full sm:w-auto"
+            >
+              <Sparkles className="h-4 w-4" />
+              {isGenerating ? "Generating..." : "Generate with AI"}
+            </Button>
+          </div>
+          <div className="flex gap-2 w-full sm:w-auto justify-end">
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
