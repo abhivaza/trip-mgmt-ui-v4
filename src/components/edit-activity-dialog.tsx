@@ -49,9 +49,6 @@ export const EditActivityDialog = ({
 
         <div className="py-4 space-y-4">
           <div className="space-y-2">
-            <label htmlFor="activity-name" className="text-sm font-medium">
-              Activity Name
-            </label>
             <input
               id="activity-name"
               className="w-full p-2 border rounded-md"
@@ -61,7 +58,6 @@ export const EditActivityDialog = ({
           </div>
 
           <div className="space-y-2 max-h-[400px] overflow-y-auto">
-            <label className="text-sm font-medium">Activity Description</label>
             <MarkdownEditor value={editContent} onChange={setEditContent} />
           </div>
         </div>
@@ -71,7 +67,7 @@ export const EditActivityDialog = ({
             <input
               type="text"
               placeholder="Special request for AI..."
-              className="w-full sm:w-auto p-2 text-sm border rounded-md"
+              className="w-full sm:w-auto p-2 border rounded-md"
               value={specialRequest || ""}
               onChange={(e) => setSpecialRequest?.(e.target.value)}
               disabled={isGenerating}
