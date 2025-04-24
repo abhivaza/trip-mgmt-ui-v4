@@ -11,11 +11,16 @@ import type { ItineraryResponse } from "@/types/itinerary";
 import LoadingSpinner from "@/components/loading-spinner";
 import { TripCard } from "@/components/trip-card";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
+import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 
 export default function TripsPage() {
   const [trips, setTrips] = useState<ItineraryResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [tripToDelete, setTripToDelete] = useState<ItineraryResponse | null>(
+    null
+  );
   const router = useRouter();
   const api = useApi();
   const { toast } = useToast();
@@ -56,15 +61,23 @@ export default function TripsPage() {
   }, [api, router, toast, user]);
 
   const handleEditTrip = (tripId: string) => {
-    // Implement edit functionality
-    console.log(`Editing trip ${tripId}`);
+    router.push(`/app/trip/${tripId}`);
   };
 
-  const handleDeleteTrip = async (tripId: string) => {
+  const handleDeleteTrip = (tripId: string) => {
+    setTripToDelete(trips.find((trip) => trip.id === tripId) || null);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!tripToDelete) return;
+
     try {
-      await api.delete(`/app/trip/${tripId}`);
+      await api.delete(`/app/trip/${tripToDelete.id}`);
       // Update the trips state by filtering out the deleted trip
-      setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== tripId));
+      setTrips((prevTrips) =>
+        prevTrips.filter((trip) => trip.id !== tripToDelete.id)
+      );
       toast({
         title: "Success",
         description: "Trip deleted successfully.",
@@ -76,6 +89,9 @@ export default function TripsPage() {
         description: "Failed to delete trip. " + TRY_AGAIN_TEXT,
         variant: "destructive",
       });
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setTripToDelete(null);
     }
   };
 
@@ -120,6 +136,17 @@ export default function TripsPage() {
           <ChatbotSection chatInitType="general" />
         </div>
       </div>
+
+      <DeleteConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setTripToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Trip"
+        description={`Are you sure you want to delete trip to ${tripToDelete?.city}, ${tripToDelete?.country}? This action cannot be undone.`}
+      />
     </div>
   );
 }
