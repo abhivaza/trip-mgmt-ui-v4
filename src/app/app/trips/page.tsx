@@ -60,9 +60,23 @@ export default function TripsPage() {
     console.log(`Editing trip ${tripId}`);
   };
 
-  const handleDeleteTrip = (tripId: string) => {
-    // Implement delete functionality
-    console.log(`Deleting trip ${tripId}`);
+  const handleDeleteTrip = async (tripId: string) => {
+    try {
+      await api.delete(`/app/trip/${tripId}`);
+      // Update the trips state by filtering out the deleted trip
+      setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== tripId));
+      toast({
+        title: "Success",
+        description: "Trip deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting trip:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete trip. " + TRY_AGAIN_TEXT,
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {
