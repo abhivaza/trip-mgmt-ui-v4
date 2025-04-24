@@ -1,5 +1,4 @@
 "use client";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,9 +10,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface DeleteConfirmationDialogProps {
+interface DeleteConfirmDialogProps {
   isOpen: boolean;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
   title?: string;
   description?: string;
@@ -21,17 +20,17 @@ interface DeleteConfirmationDialogProps {
   confirmText?: string;
 }
 
-export function DeleteConfirmationDialog({
+export function DeleteConfirmDialog({
   isOpen,
-  onClose,
+  onOpenChange,
   onConfirm,
-  title = "Are you sure?",
-  description = "This action cannot be undone. This will permanently delete this item and remove all associated data.",
+  title = "Are you absolutely sure?",
+  description = "This action cannot be undone. This will permanently delete the item.",
   cancelText = "Cancel",
   confirmText = "Delete",
-}: DeleteConfirmationDialogProps) {
+}: DeleteConfirmDialogProps) {
   return (
-    <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
@@ -39,10 +38,7 @@ export function DeleteConfirmationDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{cancelText}</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={onConfirm}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-          >
+          <AlertDialogAction onClick={onConfirm}>
             {confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>

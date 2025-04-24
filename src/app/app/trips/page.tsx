@@ -11,7 +11,7 @@ import type { ItineraryResponse } from "@/types/itinerary";
 import LoadingSpinner from "@/components/loading-spinner";
 import { TripCard } from "@/components/trip-card";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
-import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
+import { DeleteConfirmDialog } from "@/components/delete-confirmation-dialog";
 
 export default function TripsPage() {
   const [trips, setTrips] = useState<ItineraryResponse[]>([]);
@@ -137,12 +137,9 @@ export default function TripsPage() {
         </div>
       </div>
 
-      <DeleteConfirmationDialog
+      <DeleteConfirmDialog
         isOpen={isDeleteDialogOpen}
-        onClose={() => {
-          setIsDeleteDialogOpen(false);
-          setTripToDelete(null);
-        }}
+        onOpenChange={setIsDeleteDialogOpen}
         onConfirm={confirmDelete}
         title="Delete Trip"
         description={`Are you sure you want to delete trip to ${tripToDelete?.city}, ${tripToDelete?.country}? This action cannot be undone.`}
