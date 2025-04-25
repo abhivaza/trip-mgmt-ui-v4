@@ -89,9 +89,6 @@ export default function TripsPage() {
         description: "Failed to delete trip. " + TRY_AGAIN_TEXT,
         variant: "destructive",
       });
-    } finally {
-      setIsDeleteDialogOpen(false);
-      setTripToDelete(null);
     }
   };
 
