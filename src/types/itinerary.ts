@@ -1,4 +1,4 @@
-export interface ItineraryResponse {
+export interface Itinerary {
   id?: string;
   message?: string;
   city?: string;
@@ -10,6 +10,7 @@ export interface ItineraryResponse {
   fromDate?: string;
   tripDuration?: number;
   imageURL?: string;
+  sharedWith?: string[];
 }
 
 export interface ItineraryDayActivity {

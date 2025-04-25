@@ -17,7 +17,7 @@ import { TripSections } from "@/components/trip-sections";
 
 import type {
   ItineraryDayActivity,
-  ItineraryResponse,
+  Itinerary,
   ThingsToDo,
 } from "@/types/itinerary";
 import { EditActivityDialog } from "./edit-activity-dialog";
@@ -25,8 +25,8 @@ import { EditActivityDialog } from "./edit-activity-dialog";
 interface DayCardProps {
   day: ItineraryDayActivity;
   tripId: string;
-  itinerary: ItineraryResponse | undefined;
-  setItinerary: (itinerary: ItineraryResponse) => void;
+  itinerary: Itinerary | undefined;
+  setItinerary: (itinerary: Itinerary) => void;
 }
 
 export const DayCard = ({

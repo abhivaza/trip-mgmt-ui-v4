@@ -7,18 +7,18 @@ import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
 import { ChatbotSection } from "@/components/chatbot";
-import type { ItineraryResponse } from "@/types/itinerary";
+import type { Itinerary } from "@/types/itinerary";
 import LoadingSpinner from "@/components/loading-spinner";
 import { TripCard } from "@/components/trip-card";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 import { DeleteConfirmDialog } from "@/components/delete-confirmation-dialog";
 
 export default function TripsPage() {
-  const [trips, setTrips] = useState<ItineraryResponse[]>([]);
+  const [trips, setTrips] = useState<Itinerary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [tripToDelete, setTripToDelete] = useState<ItineraryResponse | null>(
+  const [tripToDelete, setTripToDelete] = useState<Itinerary | null>(
     null
   );
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function TripsPage() {
     async function fetchTrips() {
       try {
         setIsLoading(true);
-        const tripsData = await api.get<ItineraryResponse[]>("/app/trips");
+        const tripsData = await api.get<Itinerary[]>("/app/trips");
         setTrips(tripsData);
       } catch (error) {
         console.error("Error fetching trips:", error);

@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useApi } from "@/providers/api-provider";
 import { DeleteConfirmDialog } from "./delete-confirmation-dialog";
+import { Itinerary } from "@/types/itinerary";
 
 interface ShareTripDialogProps {
   isOpen: boolean;
@@ -28,10 +29,7 @@ interface ShareTripDialogProps {
 }
 
 interface ShareTripButtonProps {
-  trip: {
-    id: string;
-    sharedWith?: string[];
-  };
+  trip: Itinerary;
   className?: string;
 }
 

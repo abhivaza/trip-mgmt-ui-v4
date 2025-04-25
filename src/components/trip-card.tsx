@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Edit, Trash2, MoreVertical, MapPin, Calendar } from "lucide-react";
 import Image from "next/image";
-import { ItineraryResponse } from "@/types/itinerary";
+import { Itinerary } from "@/types/itinerary";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 
 interface TripCardProps {
-  trip: ItineraryResponse;
+  trip: Itinerary;
   onEdit?: (tripId: string) => void;
   onDelete?: (tripId: string) => void;
 }

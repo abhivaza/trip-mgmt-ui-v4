@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { TripToolbar } from "@/components/trip-toolbar";
-import { ItineraryResponse } from "@/types/itinerary";
+import { Itinerary } from "@/types/itinerary";
 
 interface TripImageProps {
   imageURL: string;
   highlight: string;
-  trip: ItineraryResponse;
+  trip: Itinerary;
 }
 
 export const TripImage = ({ imageURL, highlight, trip }: TripImageProps) => {
