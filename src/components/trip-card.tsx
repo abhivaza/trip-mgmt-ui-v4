@@ -27,7 +27,6 @@ export function TripCard({ trip, onEdit, onDelete }: TripCardProps) {
 
   const handleDelete = (id: string) => {
     onDelete?.(id || "");
-
     setOpen(false);
   };
 

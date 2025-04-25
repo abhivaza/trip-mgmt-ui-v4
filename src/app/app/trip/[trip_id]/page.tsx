@@ -59,7 +59,7 @@ export default function ItineraryPage() {
           <TripImage
             imageURL={itinerary.imageURL || ""}
             highlight={`Your Trip to ${itinerary?.city}, ${itinerary?.country}`}
-            tripId={trip_id}
+            trip={itinerary}
           />
         </div>
       )}
