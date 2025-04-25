@@ -1,13 +1,14 @@
-import Image from "next/image"
-import { ShareTrip } from "@/components/share-trip"
+import Image from "next/image";
+import { TripToolbar } from "@/components/trip-toolbar";
+import { Itinerary } from "@/types/itinerary";
 
 interface TripImageProps {
-  imageURL: string
-  highlight: string
-  tripId: string
+  imageURL: string;
+  highlight: string;
+  trip: Itinerary;
 }
 
-export const TripImage = ({ imageURL, highlight, tripId }: TripImageProps) => {
+export const TripImage = ({ imageURL, highlight, trip }: TripImageProps) => {
   return (
     <div className="relative w-full h-[300px] mb-8 rounded-lg overflow-hidden">
       <Image
@@ -17,10 +18,14 @@ export const TripImage = ({ imageURL, highlight, tripId }: TripImageProps) => {
         objectFit="cover"
         className="transition-transform duration-300 hover:scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-between p-6">
-        <h2 className="text-white text-3xl font-bold drop-shadow-lg">{highlight}</h2>
-        <ShareTrip tripId={tripId} className="absolute top-4 right-4" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+        <h2 className="text-white text-3xl font-bold drop-shadow-lg">
+          {highlight}
+        </h2>
+      </div>
+      <div className="absolute top-4 right-4">
+        <TripToolbar trip={trip} />
       </div>
     </div>
-  )
-}
+  );
+};

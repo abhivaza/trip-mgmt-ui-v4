@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
 import { useApi } from "@/providers/api-provider";
-import { ItineraryResponse } from "@/types/itinerary";
+import { Itinerary } from "@/types/itinerary";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 
 export const GenerateItinerary: React.FC = () => {
@@ -40,7 +40,7 @@ export const GenerateItinerary: React.FC = () => {
       setIsLoading(true);
       const itineraryData = await api.post<
         { destination: string },
-        ItineraryResponse
+        Itinerary
       >("/app/trip/generate", {
         destination: destination,
       });

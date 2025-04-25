@@ -10,10 +10,10 @@ import { DayCard } from "@/components/day-card";
 import { ChatbotSection } from "@/components/chatbot";
 import { useResponsive } from "@/hooks/use-responsive";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
-import type { ItineraryResponse } from "@/types/itinerary";
+import type { Itinerary } from "@/types/itinerary";
 
 export default function ItineraryPage() {
-  const [itinerary, setItinerary] = useState<ItineraryResponse>();
+  const [itinerary, setItinerary] = useState<Itinerary>();
   const { isMobile } = useResponsive();
 
   const params: { trip_id: string } = useParams();
@@ -25,7 +25,7 @@ export default function ItineraryPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const itineraryData = await api.get<ItineraryResponse>(
+        const itineraryData = await api.get<Itinerary>(
           `/app/trip/${trip_id}`
         );
 
@@ -59,7 +59,7 @@ export default function ItineraryPage() {
           <TripImage
             imageURL={itinerary.imageURL || ""}
             highlight={`Your Trip to ${itinerary?.city}, ${itinerary?.country}`}
-            tripId={trip_id}
+            trip={itinerary}
           />
         </div>
       )}

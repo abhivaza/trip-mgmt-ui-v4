@@ -4,7 +4,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TripCard } from "@/components/trip-card";
-import { ItineraryResponse } from "@/types/itinerary";
+import { Itinerary } from "@/types/itinerary";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
@@ -13,7 +13,7 @@ import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 
 export const PopularDestinations = () => {
   const router = useRouter();
-  const [trips, setTrips] = useState<ItineraryResponse[]>([]);
+  const [trips, setTrips] = useState<Itinerary[]>([]);
 
   const { toast } = useToast();
   const { user } = useAuth();
@@ -22,7 +22,7 @@ export const PopularDestinations = () => {
   useEffect(() => {
     async function fetchTrips() {
       try {
-        const tripsData = await api.get<ItineraryResponse[]>("/public/trips");
+        const tripsData = await api.get<Itinerary[]>("/public/trips");
         setTrips(tripsData);
       } catch (error) {
         console.error("Error fetching trips:", error);
