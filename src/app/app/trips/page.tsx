@@ -12,6 +12,7 @@ import LoadingSpinner from "@/components/loading-spinner";
 import { TripCard } from "@/components/trip-card";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 import { DeleteConfirmDialog } from "@/components/delete-confirmation-dialog";
+import { DeleteConfirmDialog } from "@/components/delete-confirmation-dialog";
 
 export default function TripsPage() {
   const [trips, setTrips] = useState<Itinerary[]>([]);
@@ -61,6 +62,7 @@ export default function TripsPage() {
   }, [api, router, toast, user]);
 
   const handleEditTrip = (tripId: string) => {
+    router.push(`/app/trip/${tripId}`);
     router.push(`/app/trip/${tripId}`);
   };
 
@@ -133,6 +135,14 @@ export default function TripsPage() {
           <ChatbotSection chatInitType="general" />
         </div>
       </div>
+
+      <DeleteConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        title="Delete Trip"
+        description={`Are you sure you want to delete trip to ${tripToDelete?.city}, ${tripToDelete?.country}? This action cannot be undone.`}
+      />
 
       <DeleteConfirmDialog
         isOpen={isDeleteDialogOpen}
