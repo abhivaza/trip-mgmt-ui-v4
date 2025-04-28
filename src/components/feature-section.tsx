@@ -140,7 +140,7 @@ export default function FeatureSection() {
                         </svg>
                       </div>
                       <p className="text-sm">
-                        Streamlined user experience for mobile devices too
+                        Streamlined user experience for mobile devices
                       </p>
                     </div>
                   </div>

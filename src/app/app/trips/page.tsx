@@ -23,7 +23,6 @@ export default function TripsPage() {
   const router = useRouter();
   const api = useApi();
   const { toast } = useToast();
-  const { user } = useAuth();
 
   useEffect(() => {
     async function fetchTrips() {
@@ -44,7 +43,7 @@ export default function TripsPage() {
     }
 
     fetchTrips();
-  }, [api, router, toast, user]);
+  }, [api, toast]);
 
   const handleEditTrip = (tripId: string) => {
     router.push(`/app/trip/${tripId}`);

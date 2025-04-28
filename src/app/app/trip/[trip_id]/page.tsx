@@ -44,7 +44,7 @@ export default function ItineraryPage() {
         console.error("Error:", error);
         toast({
           title: "Error",
-          description: "Failed to generate itinerary." + " " + TRY_AGAIN_TEXT,
+          description: "Failed to fetch itinerary." + " " + TRY_AGAIN_TEXT,
           variant: "destructive",
         });
       } finally {
@@ -92,7 +92,7 @@ export default function ItineraryPage() {
             ))}
           </div>
         </div>
-        
+
         <div className={`${isMobile ? "w-full" : "w-2/5 min-w-[300px]"}`}>
           <ChatbotSection chatInitType="trip-specific" />
         </div>
