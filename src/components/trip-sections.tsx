@@ -407,7 +407,7 @@ export function TripSections({
   return (
     <>
       <div className="w-full">
-        <div className="flex justify-between items-center mb-4 pb-2 border-b">
+        <div className="flex justify-between items-center mb-2 pb-2">
           <h2 className="text-lg font-semibold">
             What would you do on your Trip?
           </h2>
@@ -499,129 +499,121 @@ export function TripSections({
             </p>
           </div>
         ) : (
-          <ScrollArea className="h-[500px] pr-3">
-            <div className="space-y-4">
-              {sections.map((section) => (
-                <div key={section.id} className="rounded-md">
-                  <Collapsible
-                    open={expandedSections[section.id]}
-                    onOpenChange={() => toggleSection(section.id)}
-                    className="w-full"
-                  >
-                    <div className="flex items-center gap-2 py-2 px-3 bg-muted/30 rounded-t-md">
-                      <CollapsibleTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="p-0 h-6 w-6"
-                        >
-                          {expandedSections[section.id] ? (
-                            <ChevronDown className="h-4 w-4" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </CollapsibleTrigger>
-
-                      <div className="flex items-center gap-2 flex-1">
-                        {generatingSectionId === section.id ? (
-                          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+          <div className="space-y-4">
+            {sections.map((section) => (
+              <div key={section.id} className="rounded-md">
+                <Collapsible
+                  open={expandedSections[section.id]}
+                  onOpenChange={() => toggleSection(section.id)}
+                  className="w-full"
+                >
+                  <div className="flex items-center gap-2 py-2 bg-muted rounded-t-md">
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="sm" className="p-0 h-6 w-6">
+                        {expandedSections[section.id] ? (
+                          <ChevronDown className="h-4 w-4" />
                         ) : (
-                          getSectionIcon(section.title)
+                          <ChevronRight className="h-4 w-4" />
                         )}
-                        <h3 className="font-medium">{section.title}</h3>
-                        {generatingSectionId === section.id && (
-                          <Badge variant="outline" className="ml-2">
-                            Generating...
-                          </Badge>
-                        )}
-                      </div>
+                      </Button>
+                    </CollapsibleTrigger>
+
+                    <div className="flex items-center gap-2 flex-1">
+                      {generatingSectionId === section.id ? (
+                        <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                      ) : (
+                        getSectionIcon(section.title)
+                      )}
+                      <h3 className="font-medium">{section.title}</h3>
+                      {generatingSectionId === section.id && (
+                        <Badge variant="outline" className="ml-2">
+                          Generating...
+                        </Badge>
+                      )}
+                    </div>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 ml-auto"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeSection(section.id);
+                      }}
+                      disabled={generatingSectionId === section.id}
+                    >
+                      <X className="h-3 w-3" />
+                      <span className="sr-only">Remove</span>
+                    </Button>
+                  </div>
+
+                  <CollapsibleContent>
+                    <div className="pl-2 pr-2 py-2 space-y-3 border-l border-r border-b rounded-b-md">
+                      {section.activities.map((activity, index) => (
+                        <div key={index} className="pr-2 group">
+                          <div className="flex items-start gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
+                            <div className="flex-1">
+                              <div className="flex justify-between items-start">
+                                <h4 className="font-medium text-sm">
+                                  {activity.title}
+                                </h4>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() =>
+                                    removeActivity(section.id, activity.title)
+                                  }
+                                  disabled={generatingSectionId === section.id}
+                                >
+                                  <X className="h-3 w-3" />
+                                  <span className="sr-only">
+                                    Remove activity
+                                  </span>
+                                </Button>
+                              </div>
+                              <div className="text-sm prose prose-sm max-w-none mt-1 pl-0">
+                                <ReactMarkdown>
+                                  {activity.description}
+                                </ReactMarkdown>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="p-0 h-auto mt-1 text-xs text-muted-foreground hover:text-foreground"
+                                onClick={() =>
+                                  openEditDialog(section, activity)
+                                }
+                                disabled={generatingSectionId === section.id}
+                              >
+                                <Edit className="h-3 w-3 mr-1" />
+                                Edit
+                              </Button>
+                            </div>
+                          </div>
+                          {index < section.activities.length - 1 && (
+                            <Separator className="my-3" />
+                          )}
+                        </div>
+                      ))}
 
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-6 w-6 p-0 ml-auto"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeSection(section.id);
-                        }}
+                        className="mt-2"
+                        onClick={() => addActivity(section.id)}
                         disabled={generatingSectionId === section.id}
                       >
-                        <X className="h-3 w-3" />
-                        <span className="sr-only">Remove</span>
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add Activity
                       </Button>
                     </div>
-
-                    <CollapsibleContent>
-                      <div className="pl-8 pr-2 py-2 space-y-3 border-l border-r border-b rounded-b-md">
-                        {section.activities.map((activity, index) => (
-                          <div key={index} className="group">
-                            <div className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                              <div className="flex-1">
-                                <div className="flex justify-between items-start">
-                                  <h4 className="font-medium text-sm">
-                                    {activity.title}
-                                  </h4>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    onClick={() =>
-                                      removeActivity(section.id, activity.title)
-                                    }
-                                    disabled={
-                                      generatingSectionId === section.id
-                                    }
-                                  >
-                                    <X className="h-3 w-3" />
-                                    <span className="sr-only">
-                                      Remove activity
-                                    </span>
-                                  </Button>
-                                </div>
-                                <div className="text-sm prose prose-sm max-w-none mt-1 pl-0">
-                                  <ReactMarkdown>
-                                    {activity.description}
-                                  </ReactMarkdown>
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="p-0 h-auto mt-1 text-xs text-muted-foreground hover:text-foreground"
-                                  onClick={() =>
-                                    openEditDialog(section, activity)
-                                  }
-                                  disabled={generatingSectionId === section.id}
-                                >
-                                  <Edit className="h-3 w-3 mr-1" />
-                                  Edit
-                                </Button>
-                              </div>
-                            </div>
-                            {index < section.activities.length - 1 && (
-                              <Separator className="my-3" />
-                            )}
-                          </div>
-                        ))}
-
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="mt-2"
-                          onClick={() => addActivity(section.id)}
-                          disabled={generatingSectionId === section.id}
-                        >
-                          <Plus className="h-3 w-3 mr-1" />
-                          Add Activity
-                        </Button>
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

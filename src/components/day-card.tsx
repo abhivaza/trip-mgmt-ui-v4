@@ -148,7 +148,7 @@ export const DayCard = ({
 
   return (
     <Card className="w-full h-full">
-      <CardHeader>
+      <CardHeader className="p-4">
         <CardTitle className="flex justify-between items-center">
           <span>
             Day {day.dayNumber}: {day.title}
@@ -162,7 +162,7 @@ export const DayCard = ({
         <CardDescription>Place: {day.place}</CardDescription>
         <CardDescription>{day.shortDescription}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 pt-0">
         <div className="flex flex-col gap-6">
           <div className="flex-1">
             <div className="mb-2">
