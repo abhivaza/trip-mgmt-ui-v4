@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/providers/auth-provider";
 import { ChatbotSection } from "@/components/chatbot";
 import type { Itinerary } from "@/types/itinerary";
 import LoadingSpinner from "@/components/loading-spinner";
