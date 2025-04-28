@@ -551,7 +551,7 @@ export function TripSections({
                           <div key={index} className="group">
                             <div className="flex items-start">
                               <div className="flex-1">
-                                <div className="flex justify-between items-start">
+                                <div className="flex justify-between items-center bg-muted w-full py-2">
                                   <h4 className="font-medium text-sm">
                                     {activity.title}
                                   </h4>
