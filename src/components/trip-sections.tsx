@@ -545,66 +545,69 @@ export function TripSections({
                   </div>
 
                   <CollapsibleContent>
-                    <div className="pl-4 pr-2 py-2 space-y-3 border-l border-r border-b rounded-b-md">
-                      {section.activities.map((activity, index) => (
-                        <div key={index} className="group">
-                          <div className="flex items-start gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                            <div className="flex-1">
-                              <div className="flex justify-between items-start">
-                                <h4 className="font-medium text-sm">
-                                  {activity.title}
-                                </h4>
+                    <div className="pl-4 pr-2 py-2 border-l border-r border-b rounded-b-md">
+                      <div className="grid gap-3">
+                        {section.activities.map((activity, index) => (
+                          <div key={index} className="group">
+                            <div className="flex items-start">
+                              <div className="flex-1">
+                                <div className="flex justify-between items-start">
+                                  <h4 className="font-medium text-sm">
+                                    {activity.title}
+                                  </h4>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() =>
+                                      removeActivity(section.id, activity.title)
+                                    }
+                                    disabled={
+                                      generatingSectionId === section.id
+                                    }
+                                  >
+                                    <X className="h-3 w-3" />
+                                    <span className="sr-only">
+                                      Remove activity
+                                    </span>
+                                  </Button>
+                                </div>
+                                <div className="text-sm prose prose-sm max-w-none mt-1">
+                                  <ReactMarkdown>
+                                    {activity.description}
+                                  </ReactMarkdown>
+                                </div>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  className="p-0 h-auto mt-3 text-xs text-muted-foreground hover:text-foreground"
                                   onClick={() =>
-                                    removeActivity(section.id, activity.title)
+                                    openEditDialog(section, activity)
                                   }
                                   disabled={generatingSectionId === section.id}
                                 >
-                                  <X className="h-3 w-3" />
-                                  <span className="sr-only">
-                                    Remove activity
-                                  </span>
+                                  <Edit className="h-3 w-3 mr-1" />
+                                  Edit
                                 </Button>
                               </div>
-                              <div className="text-sm prose prose-sm max-w-none mt-1 pl-0">
-                                <ReactMarkdown>
-                                  {activity.description}
-                                </ReactMarkdown>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="p-0 h-auto mt-1 text-xs text-muted-foreground hover:text-foreground"
-                                onClick={() =>
-                                  openEditDialog(section, activity)
-                                }
-                                disabled={generatingSectionId === section.id}
-                              >
-                                <Edit className="h-3 w-3 mr-1" />
-                                Edit
-                              </Button>
                             </div>
+                            {index < section.activities.length - 1 && (
+                              <Separator className="my-1" />
+                            )}
                           </div>
-                          {index < section.activities.length - 1 && (
-                            <Separator className="my-3" />
-                          )}
-                        </div>
-                      ))}
+                        ))}
 
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="mt-2"
-                        onClick={() => addActivity(section.id)}
-                        disabled={generatingSectionId === section.id}
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Add Activity
-                      </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="mt-2"
+                          onClick={() => addActivity(section.id)}
+                          disabled={generatingSectionId === section.id}
+                        >
+                          <Plus className="h-3 w-3 mr-1" />
+                          Add Activity
+                        </Button>
+                      </div>
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
