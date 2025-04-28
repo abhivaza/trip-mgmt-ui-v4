@@ -506,7 +506,7 @@ export function TripSections({
                   onOpenChange={() => toggleSection(section.id)}
                   className="w-full"
                 >
-                  <div className="flex items-center gap-2 py-2 bg-muted rounded-t-md">
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-t-md">
                     <CollapsibleTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-0 h-6 w-6">
                         {expandedSections[section.id] ? (
@@ -525,9 +525,7 @@ export function TripSections({
                       )}
                       <h3 className="font-medium">{section.title}</h3>
                       {generatingSectionId === section.id && (
-                        <Badge variant="outline" className="ml-2">
-                          Generating...
-                        </Badge>
+                        <Badge variant="secondary">Generating...</Badge>
                       )}
                     </div>
 
@@ -547,9 +545,9 @@ export function TripSections({
                   </div>
 
                   <CollapsibleContent>
-                    <div className="pl-2 pr-2 py-2 space-y-3 border-l border-r border-b rounded-b-md">
+                    <div className="pl-4 pr-2 py-2 space-y-3 border-l border-r border-b rounded-b-md">
                       {section.activities.map((activity, index) => (
-                        <div key={index} className="pr-2 group">
+                        <div key={index} className="group">
                           <div className="flex items-start gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
                             <div className="flex-1">
