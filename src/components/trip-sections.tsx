@@ -524,7 +524,7 @@ export function TripSections({
                         ) : (
                           getSectionIcon(section.title)
                         )}
-                        <h3 className="font-medium text-sm">{section.title}</h3>
+                        <h3 className="font-medium text-base">{section.title}</h3>
                         {generatingSectionId === section.id && (
                           <Badge variant="secondary">Generating...</Badge>
                         )}
@@ -554,7 +554,7 @@ export function TripSections({
                             <div className="flex items-start">
                               <div className="flex-1">
                                 <div className="flex justify-between items-center bg-muted w-full py-2">
-                                  <h4 className="font-medium text-sm">
+                                  <h4 className="font-medium">
                                     {activity.title}
                                   </h4>
                                   <Button
@@ -574,7 +574,7 @@ export function TripSections({
                                     </span>
                                   </Button>
                                 </div>
-                                <div className="text-sm prose prose-sm max-w-none mt-1">
+                                <div className="prose prose-sm max-w-none mt-1">
                                   <ReactMarkdown>
                                     {activity.description}
                                   </ReactMarkdown>
@@ -582,7 +582,7 @@ export function TripSections({
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="p-0 h-auto mt-3 text-xs text-muted-foreground hover:text-foreground"
+                                  className="p-0 h-auto mt-3 text-sm text-muted-foreground hover:text-foreground"
                                   onClick={() =>
                                     openEditDialog(section, activity)
                                   }
