@@ -506,28 +506,30 @@ export function TripSections({
                   onOpenChange={() => toggleSection(section.id)}
                   className="w-full"
                 >
-                  <div className="flex items-center gap-2 p-2 bg-muted rounded-t-md">
+                  <div className="flex items-center gap-2 p-2 bg-muted border-x border-y">
                     <CollapsibleTrigger asChild>
-                      <Button variant="ghost" size="sm" className="p-0 h-6 w-6">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex w-full items-center justify-start gap-2 px-0 h-auto"
+                      >
                         {expandedSections[section.id] ? (
-                          <ChevronDown className="h-4 w-4" />
+                          <ChevronDown className="h-4 w-4 shrink-0" />
                         ) : (
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className="h-4 w-4 shrink-0" />
+                        )}
+
+                        {generatingSectionId === section.id ? (
+                          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                        ) : (
+                          getSectionIcon(section.title)
+                        )}
+                        <h3 className="font-medium text-sm">{section.title}</h3>
+                        {generatingSectionId === section.id && (
+                          <Badge variant="secondary">Generating...</Badge>
                         )}
                       </Button>
                     </CollapsibleTrigger>
-
-                    <div className="flex items-center gap-2 flex-1">
-                      {generatingSectionId === section.id ? (
-                        <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                      ) : (
-                        getSectionIcon(section.title)
-                      )}
-                      <h3 className="font-medium">{section.title}</h3>
-                      {generatingSectionId === section.id && (
-                        <Badge variant="secondary">Generating...</Badge>
-                      )}
-                    </div>
 
                     <Button
                       variant="ghost"
@@ -545,7 +547,7 @@ export function TripSections({
                   </div>
 
                   <CollapsibleContent>
-                    <div className="pl-4 pr-2 py-2 border-l border-r border-b rounded-b-md">
+                    <div className="p-4 border-l border-r border-b rounded-b-md">
                       <div className="grid gap-3">
                         {section.activities.map((activity, index) => (
                           <div key={index} className="group">
