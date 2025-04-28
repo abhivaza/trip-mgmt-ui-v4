@@ -63,12 +63,6 @@ export default function Header() {
               </>
             ) : (
               <>
-                <Link
-                  href="#features"
-                  className="hidden md:flex text-sm font-medium hover:text-primary transition-colors"
-                >
-                  Features
-                </Link>
                 <Button
                   variant="outline"
                   size="sm"
