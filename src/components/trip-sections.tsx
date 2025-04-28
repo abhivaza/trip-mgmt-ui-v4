@@ -136,10 +136,10 @@ export function TripSections({
   useEffect(() => {
     if (thingsToDo && thingsToDo.length > 0) {
       setSections(thingsToDo);
-      // Initialize all sections as expanded
+      // Initialize all sections as collapsed instead of expanded
       const expanded: Record<string, boolean> = {};
       thingsToDo.forEach((section) => {
-        expanded[section.id] = true;
+        expanded[section.id] = false;
       });
       setExpandedSections(expanded);
     }
@@ -172,10 +172,10 @@ export function TripSections({
     setThingsToDo(updatedSections);
     setOpen(false);
 
-    // Set the new section as expanded
+    // Set the new section as collapsed
     setExpandedSections((prev) => ({
       ...prev,
-      [newSection.id]: true,
+      [newSection.id]: false,
     }));
 
     setGeneratingSectionId(newSection.id);
@@ -249,10 +249,10 @@ export function TripSections({
     setIsCreatingCustom(false);
     setOpen(false);
 
-    // Set the new section as expanded
+    // Set the new section as collapsed
     setExpandedSections((prev) => ({
       ...prev,
-      [newSection.id]: true,
+      [newSection.id]: false,
     }));
 
     setGeneratingSectionId(newSection.id);
@@ -524,7 +524,9 @@ export function TripSections({
                         ) : (
                           getSectionIcon(section.title)
                         )}
-                        <h3 className="font-medium text-base">{section.title}</h3>
+                        <h3 className="font-medium text-base">
+                          {section.title}
+                        </h3>
                         {generatingSectionId === section.id && (
                           <Badge variant="secondary">Generating...</Badge>
                         )}
