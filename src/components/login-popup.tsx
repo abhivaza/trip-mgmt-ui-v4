@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -34,6 +35,7 @@ export default function LoginPopup({
   onClose: () => void;
   enablePasswordAuth?: boolean;
 }) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,10 +45,14 @@ export default function LoginPopup({
   const [resetSent, setResetSent] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
 
-  // New states for email confirmation popup
   const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
   const [confirmationEmail, setConfirmationEmail] = useState("");
   const [emailLinkUrl, setEmailLinkUrl] = useState("");
+
+  const handleSuccessfulAuth = () => {
+    onClose();
+    router.push("/app/trips");
+  };
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
@@ -54,7 +60,7 @@ export default function LoginPopup({
       setLoading(true);
       setError("");
       await signInWithPopup(auth, provider);
-      onClose();
+      handleSuccessfulAuth();
     } catch (error) {
       console.error(error);
       setError(
@@ -84,7 +90,7 @@ export default function LoginPopup({
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
-      onClose();
+      handleSuccessfulAuth();
     } catch (error) {
       console.error(error);
       setError(
@@ -128,7 +134,6 @@ export default function LoginPopup({
       setLoading(true);
       setError("");
 
-      // Configure actionCodeSettings
       const actionCodeSettings = {
         url: window.location.href,
         handleCodeInApp: true,
@@ -136,7 +141,6 @@ export default function LoginPopup({
 
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
 
-      // Save the email locally to use it for sign-in completion
       window.localStorage.setItem("emailForSignIn", email);
       setMagicLinkSent(true);
     } catch (error) {
@@ -154,10 +158,9 @@ export default function LoginPopup({
       setLoading(true);
       await signInWithEmailLink(auth, email, url);
       window.localStorage.removeItem("emailForSignIn");
-      // Clear the URL to remove the sign-in link
       window.history.replaceState(null, "", window.location.pathname);
       setShowEmailConfirmation(false);
-      onClose();
+      handleSuccessfulAuth();
     } catch (error) {
       console.error(error);
       setError(
@@ -168,7 +171,6 @@ export default function LoginPopup({
     }
   };
 
-  // Check if the URL contains a sign-in link when component mounts
   useEffect(() => {
     if (isSignInWithEmailLink(auth, window.location.href)) {
       const emailForSignIn = window.localStorage.getItem("emailForSignIn");
@@ -176,14 +178,12 @@ export default function LoginPopup({
       if (emailForSignIn) {
         completeSignInWithEmailLink(emailForSignIn, window.location.href);
       } else {
-        // Instead of using window.prompt, show our custom popup
         setEmailLinkUrl(window.location.href);
         setShowEmailConfirmation(true);
       }
     }
   }, []);
 
-  // Email confirmation popup
   const EmailConfirmationPopup = () => (
     <Dialog
       open={showEmailConfirmation}
@@ -392,7 +392,6 @@ export default function LoginPopup({
         </DialogContent>
       </Dialog>
 
-      {/* Render the email confirmation popup */}
       {showEmailConfirmation && <EmailConfirmationPopup />}
     </>
   );

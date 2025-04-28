@@ -18,7 +18,7 @@ export const TripImage = ({ imageURL, highlight, trip }: TripImageProps) => {
         objectFit="cover"
         className="transition-transform duration-300 hover:scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
         <h2 className="text-white text-3xl font-bold drop-shadow-lg">
           {highlight}
         </h2>

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import CompanyLogo from "@/components/company-logo";
 import { useState } from "react";
 import { useAuth } from "@/providers/auth-provider";
@@ -12,6 +13,7 @@ import MobileMenu from "@/components/mobile-menu";
 
 export default function Header() {
   const { user } = useAuth();
+  const router = useRouter();
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
 
   const openLoginDialog = () => {
@@ -21,6 +23,7 @@ export default function Header() {
   const signOut = async () => {
     try {
       await auth.signOut();
+      router.push("/");
     } catch (error) {
       console.error(error);
     }
@@ -63,12 +66,6 @@ export default function Header() {
               </>
             ) : (
               <>
-                <Link
-                  href="#features"
-                  className="hidden md:flex text-sm font-medium hover:text-primary transition-colors"
-                >
-                  Features
-                </Link>
                 <Button
                   variant="outline"
                   size="sm"

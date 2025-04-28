@@ -11,9 +11,11 @@ import { ChatbotSection } from "@/components/chatbot";
 import { useResponsive } from "@/hooks/use-responsive";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 import type { Itinerary } from "@/types/itinerary";
+import LoadingSpinner from "@/components/loading-spinner";
 
 export default function ItineraryPage() {
   const [itinerary, setItinerary] = useState<Itinerary>();
+  const [isLoading, setIsLoading] = useState(true);
   const { isMobile } = useResponsive();
 
   const params: { trip_id: string } = useParams();
@@ -25,10 +27,9 @@ export default function ItineraryPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const itineraryData = await api.get<Itinerary>(
-          `/app/trip/${trip_id}`
-        );
+        setIsLoading(true);
 
+        const itineraryData = await api.get<Itinerary>(`/app/trip/${trip_id}`);
         if (itineraryData?.itinerary?.length === 0) {
           toast({
             title: "Error",
@@ -43,25 +44,33 @@ export default function ItineraryPage() {
         console.error("Error:", error);
         toast({
           title: "Error",
-          description: "Failed to generate itinerary." + " " + TRY_AGAIN_TEXT,
+          description: "Failed to fetch itinerary." + " " + TRY_AGAIN_TEXT,
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     }
 
     fetchData();
   }, [api, trip_id, toast]);
 
+  if (isLoading) {
+    return (
+      <div className="text-center mt-8">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       {itinerary && (
-        <div className="mb-8">
-          <TripImage
-            imageURL={itinerary.imageURL || ""}
-            highlight={`Your Trip to ${itinerary?.city}, ${itinerary?.country}`}
-            trip={itinerary}
-          />
-        </div>
+        <TripImage
+          imageURL={itinerary.imageURL || ""}
+          highlight={`Your Trip to ${itinerary?.city}, ${itinerary?.country}`}
+          trip={itinerary}
+        />
       )}
 
       <TripMeta
@@ -83,6 +92,7 @@ export default function ItineraryPage() {
             ))}
           </div>
         </div>
+
         <div className={`${isMobile ? "w-full" : "w-2/5 min-w-[300px]"}`}>
           <ChatbotSection chatInitType="trip-specific" />
         </div>

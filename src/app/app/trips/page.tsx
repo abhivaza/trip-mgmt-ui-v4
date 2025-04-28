@@ -5,37 +5,23 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useApi } from "@/providers/api-provider";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/providers/auth-provider";
 import { ChatbotSection } from "@/components/chatbot";
 import type { Itinerary } from "@/types/itinerary";
 import LoadingSpinner from "@/components/loading-spinner";
 import { TripCard } from "@/components/trip-card";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
 import { DeleteConfirmDialog } from "@/components/delete-confirmation-dialog";
+import { useResponsive } from "@/hooks/use-responsive";
 
 export default function TripsPage() {
   const [trips, setTrips] = useState<Itinerary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile } = useResponsive();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [tripToDelete, setTripToDelete] = useState<Itinerary | null>(null);
   const router = useRouter();
   const api = useApi();
   const { toast } = useToast();
-  const { user } = useAuth();
-
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-
-    return () => {
-      window.removeEventListener("resize", checkIfMobile);
-    };
-  }, []);
 
   useEffect(() => {
     async function fetchTrips() {
@@ -56,7 +42,7 @@ export default function TripsPage() {
     }
 
     fetchTrips();
-  }, [api, router, toast, user]);
+  }, [api, toast]);
 
   const handleEditTrip = (tripId: string) => {
     router.push(`/app/trip/${tripId}`);
@@ -71,6 +57,8 @@ export default function TripsPage() {
     if (!tripToDelete) return;
 
     try {
+      setIsLoading(true);
+      setIsDeleteDialogOpen(false);
       await api.delete(`/app/trip/${tripToDelete.id}`);
       // Update the trips state by filtering out the deleted trip
       setTrips((prevTrips) =>
@@ -87,6 +75,8 @@ export default function TripsPage() {
         description: "Failed to delete trip. " + TRY_AGAIN_TEXT,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 

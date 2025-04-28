@@ -1,6 +1,7 @@
 "use client";
-
-import type React from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 import {
   Dialog,
@@ -11,14 +12,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Share, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useApi } from "@/providers/api-provider";
 import { DeleteConfirmDialog } from "./delete-confirmation-dialog";
-import { Itinerary } from "@/types/itinerary";
+import type { Itinerary } from "@/types/itinerary";
+import { useRouter } from "next/navigation";
 
 interface ShareTripDialogProps {
   isOpen: boolean;
@@ -39,6 +48,14 @@ interface SharedUser {
   name: string | null;
 }
 
+// Define the form schema
+const formSchema = z.object({
+  email: z
+    .string()
+    .email({ message: "Please enter a valid email address" })
+    .min(1, { message: "Email is required" }),
+});
+
 function ShareTripDialog({
   isOpen,
   onOpenChange,
@@ -46,19 +63,24 @@ function ShareTripDialog({
   tripId,
   sharedWith,
 }: ShareTripDialogProps) {
-  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<SharedUser | null>(null);
   const api = useApi();
   const { toast } = useToast();
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
   const handleDeleteUser = async () => {
     if (!userToDelete) return;
 
     try {
-      await api.delete(`/app/trip/${tripId}/share/${userToDelete.id}`);
-      // Assuming the backend returns the updated shared users list
+      await api.delete(`/app/trip/${tripId}/share/${userToDelete.email}`);
       toast({
         title: "Success",
         description: "User removed from shared trip.",
@@ -76,12 +98,11 @@ function ShareTripDialog({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      await onShare(email);
-      setEmail("");
+      await onShare(values.email);
+      form.reset();
     } catch (error) {
       console.error("Error sharing trip:", error);
     } finally {
@@ -100,22 +121,23 @@ function ShareTripDialog({
               with.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit}>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="email" className="text-right">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="friend@example.com"
-                  className="col-span-3"
-                  required
-                />
-              </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Email</FormLabel>
+                    <div className="col-span-3">
+                      <FormControl>
+                        <Input placeholder="friend@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
 
               {sharedWith && sharedWith.length > 0 && (
                 <div className="mt-4">
@@ -146,13 +168,14 @@ function ShareTripDialog({
                   </ul>
                 </div>
               )}
-            </div>
-            <DialogFooter>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Sharing..." : "Share Trip"}
-              </Button>
-            </DialogFooter>
-          </form>
+
+              <DialogFooter className="mt-6">
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Sharing..." : "Share Trip"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
 
@@ -175,6 +198,7 @@ export function TripToolbar({ trip, className }: ShareTripButtonProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const api = useApi();
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleShare = async (email: string) => {
     try {
@@ -201,8 +225,8 @@ export function TripToolbar({ trip, className }: ShareTripButtonProps) {
         title: "Success",
         description: "Trip deleted successfully!",
       });
-      // Redirect or update UI as needed after deletion
-      window.location.href = "/app/trips";
+
+      router.push("/app/trips");
     } catch (error) {
       console.error("Error deleting trip:", error);
       toast({
