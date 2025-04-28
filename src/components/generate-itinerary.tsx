@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
 import { useApi } from "@/providers/api-provider";
@@ -38,12 +38,12 @@ export const GenerateItinerary: React.FC = () => {
 
     try {
       setIsLoading(true);
-      const itineraryData = await api.post<
-        { destination: string },
-        Itinerary
-      >("/app/trip/generate", {
-        destination: destination,
-      });
+      const itineraryData = await api.post<{ destination: string }, Itinerary>(
+        "/app/trip/generate",
+        {
+          destination: destination,
+        }
+      );
 
       if (
         itineraryData?.itinerary?.length == 0 ||
@@ -85,8 +85,8 @@ export const GenerateItinerary: React.FC = () => {
           disabled={isLoading}
           className="ml-2"
         >
+          {!isLoading && <Sparkles className="h-4 w-4" />}
           {isLoading ? "Generating..." : "Let's go"}
-          {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
         </Button>
       </div>
     </div>
