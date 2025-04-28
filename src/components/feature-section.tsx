@@ -1,4 +1,4 @@
-import { Zap, MessageCircle, Map, ArrowRight } from "lucide-react";
+import { Zap, Map, ArrowRight, Sparkles } from "lucide-react";
 
 export default function FeatureSection() {
   return (
@@ -9,7 +9,7 @@ export default function FeatureSection() {
         </h3>
         <p className="text-center text-lg mb-8 max-w-2xl mx-auto">
           Must-visit destinations and dream experiences, all based on your own
-          preferences. All that, taking into account hotels and travel.
+          preferences and interests.
         </p>
 
         <div className="max-w-5xl mx-auto">
@@ -40,7 +40,7 @@ export default function FeatureSection() {
                       <span className="bg-primary/10 text-primary p-1 rounded mr-3 mt-0.5">
                         <ArrowRight className="h-4 w-4" />
                       </span>
-                      <span>Optimized for your budget and interests</span>
+                      <span>Optimized for your interests and activities</span>
                     </li>
                   </ul>
                 </div>
@@ -48,17 +48,15 @@ export default function FeatureSection() {
 
               <div className="flex flex-col items-center">
                 <div className="bg-primary text-primary-foreground rounded-full p-4 mb-6 shadow-lg shadow-primary/20">
-                  <MessageCircle className="h-8 w-8" />
+                  <Sparkles className="h-8 w-8" />
                 </div>
                 <h4 className="text-xl font-semibold mb-3 text-center">
-                  Refine with AI Chat
+                  Recommendations with AI
                 </h4>
                 <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 w-full flex-1 flex flex-col min-h-[200px]">
                   <div className="space-y-3 flex-1">
                     <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm">
-                        Can you add more outdoor activities?
-                      </p>
+                      <p className="text-sm">More outdoor activities</p>
                     </div>
                     <div className="bg-primary/10 rounded-lg p-3 max-w-[80%] ml-auto">
                       <p className="text-sm">
@@ -68,7 +66,7 @@ export default function FeatureSection() {
                     </div>
                     <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
                       <p className="text-sm">
-                        Perfect! Any restaurant recommendations?
+                        Perfect! Now add restaurant recommendations
                       </p>
                     </div>
                   </div>
@@ -101,7 +99,7 @@ export default function FeatureSection() {
                         </svg>
                       </div>
                       <p className="text-sm">
-                        Real-time updates and notifications
+                        Use as your personal diary to track trip on the go
                       </p>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -121,7 +119,8 @@ export default function FeatureSection() {
                         </svg>
                       </div>
                       <p className="text-sm">
-                        Offline access to your itinerary
+                        Share with your friends and family to keep everyone
+                        organized
                       </p>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -141,7 +140,7 @@ export default function FeatureSection() {
                         </svg>
                       </div>
                       <p className="text-sm">
-                        Instant support during your trip
+                        Streamlined user experience for mobile devices too
                       </p>
                     </div>
                   </div>
