@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { MarkdownEditor } from "@/components/markdown-editor";
 import { Sparkles } from "lucide-react";
+import { Input } from "./ui/input";
 
 interface EditActivityDialogProps {
   isOpen: boolean;
@@ -22,8 +23,6 @@ interface EditActivityDialogProps {
   onSave: () => Promise<void>;
   onGenerateAI: () => Promise<void>;
   isGenerating: boolean;
-  specialRequest?: string;
-  setSpecialRequest?: (request: string) => void;
 }
 
 export const EditActivityDialog = ({
@@ -37,8 +36,6 @@ export const EditActivityDialog = ({
   onSave,
   onGenerateAI,
   isGenerating,
-  specialRequest,
-  setSpecialRequest,
 }: EditActivityDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -48,40 +45,30 @@ export const EditActivityDialog = ({
         </DialogHeader>
 
         <div className="py-4 space-y-4">
-          <div className="space-y-2">
-            <input
-              id="activity-name"
-              className="w-full p-2 border rounded-md"
+          <div className="flex items-center bg-white rounded-lg shadow-md">
+            <Input
+              type="text"
+              placeholder={title || "Activity Name"}
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
+              className="flex-grow border-none focus:ring-0"
             />
+            <Button
+              onClick={onGenerateAI}
+              disabled={isGenerating}
+              className="ml-2"
+            >
+              {!isGenerating && <Sparkles className="h-4 w-4" />}
+              {isGenerating ? "Generating..." : "Generate"}
+            </Button>
           </div>
 
-          <div className="space-y-2 max-h-[400px] overflow-y-auto">
+          <div className="space-y-2">
             <MarkdownEditor value={editContent} onChange={setEditContent} />
           </div>
         </div>
 
         <DialogFooter className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
-            <input
-              type="text"
-              placeholder="Special request for AI..."
-              className="w-full sm:w-auto p-2 border rounded-md"
-              value={specialRequest || ""}
-              onChange={(e) => setSpecialRequest?.(e.target.value)}
-              disabled={isGenerating}
-            />
-            <Button
-              variant="outline"
-              onClick={onGenerateAI}
-              disabled={isGenerating}
-              className="flex items-center gap-2 w-full sm:w-auto"
-            >
-              <Sparkles className="h-4 w-4" />
-              {isGenerating ? "Generating..." : "Generate with AI"}
-            </Button>
-          </div>
           <div className="flex gap-2 w-full sm:w-auto justify-end">
             <Button variant="outline" onClick={onClose}>
               Cancel

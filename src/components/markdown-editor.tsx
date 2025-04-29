@@ -34,7 +34,7 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
         ref={editorRef}
         markdown={value}
         onChange={onChange}
-        contentEditableClassName="p-4 focus:outline-none"
+        contentEditableClassName="p-4 focus:outline-none max-h-[400px] overflow-y-auto"
         placeholder="Write your content here using markdown..."
         plugins={[
           headingsPlugin(),
