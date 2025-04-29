@@ -44,7 +44,6 @@ export const DayCard = ({
   const [editName, setEditName] = useState<string>("");
   const [editContent, setEditContent] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [specialRequest, setSpecialRequest] = useState("");
 
   const api = useApi();
   const { toast } = useToast();
@@ -107,7 +106,7 @@ export const DayCard = ({
         ItineraryDayActivity
       >(`/app/trip/${tripId}/day/generate`, {
         place: day.place,
-        specialRequest: specialRequest,
+        specialRequest: editName,
       });
 
       if (response) {
@@ -207,8 +206,6 @@ export const DayCard = ({
         onSave={saveEditedContent}
         onGenerateAI={generateAIContent}
         isGenerating={isGenerating}
-        specialRequest={specialRequest}
-        setSpecialRequest={setSpecialRequest}
       />
     </Card>
   );
