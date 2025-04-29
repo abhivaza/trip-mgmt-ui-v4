@@ -136,10 +136,9 @@ export function TripSections({
   useEffect(() => {
     if (thingsToDo && thingsToDo.length > 0) {
       setSections(thingsToDo);
-      // Initialize all sections as collapsed instead of expanded
       const expanded: Record<string, boolean> = {};
       thingsToDo.forEach((section) => {
-        expanded[section.id] = false;
+        expanded[section.id] = true;
       });
       setExpandedSections(expanded);
     }
@@ -167,15 +166,14 @@ export function TripSections({
       id: `${template.id}-${Date.now()}`,
     };
 
-    const updatedSections = [...sections, newSection];
+    const updatedSections = [newSection, ...sections];
     setSections(updatedSections);
     setThingsToDo(updatedSections);
     setOpen(false);
 
-    // Set the new section as collapsed
     setExpandedSections((prev) => ({
       ...prev,
-      [newSection.id]: false,
+      [newSection.id]: true,
     }));
 
     setGeneratingSectionId(newSection.id);
@@ -242,17 +240,16 @@ export function TripSections({
       ],
     };
 
-    const updatedSections = [...sections, newSection];
+    const updatedSections = [newSection, ...sections];
     setSections(updatedSections);
     setThingsToDo(updatedSections);
     setCustomSectionTitle("");
     setIsCreatingCustom(false);
     setOpen(false);
 
-    // Set the new section as collapsed
     setExpandedSections((prev) => ({
       ...prev,
-      [newSection.id]: false,
+      [newSection.id]: true,
     }));
 
     setGeneratingSectionId(newSection.id);
@@ -491,7 +488,7 @@ export function TripSections({
         </div>
 
         {sections.length === 0 ? (
-          <div className="text-center text-muted-foreground p-8 border rounded-md">
+          <div className="text-center text-muted-foreground p-4 border rounded-md">
             <p>
               Add things to do as per your preference and interests. Use AI to
               generate starter content.
@@ -549,13 +546,13 @@ export function TripSections({
                   </div>
 
                   <CollapsibleContent>
-                    <div className="p-4 border-l border-r border-b rounded-b-md">
+                    <div className="p-2 border-l border-r border-b rounded-b-md">
                       <div className="grid gap-3">
                         {section.activities.map((activity, index) => (
                           <div key={index} className="group">
-                            <div className="flex items-start">
+                            <div className="flex items-start border-b">
                               <div className="flex-1">
-                                <div className="flex justify-between items-center bg-muted w-full py-2">
+                                <div className="flex justify-between items-center bg-muted w-full py-2 px-2">
                                   <h4 className="font-medium">
                                     {activity.title}
                                   </h4>
@@ -576,7 +573,7 @@ export function TripSections({
                                     </span>
                                   </Button>
                                 </div>
-                                <div className="prose prose-sm max-w-none mt-1">
+                                <div className="prose prose-sm max-w-none mt-2 pl-2">
                                   <ReactMarkdown>
                                     {activity.description}
                                   </ReactMarkdown>
@@ -584,7 +581,7 @@ export function TripSections({
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="p-0 h-auto mt-3 text-sm text-muted-foreground hover:text-foreground"
+                                  className="px-2 py-1 h-auto mt-2 text-sm text-muted-foreground hover:text-foreground"
                                   onClick={() =>
                                     openEditDialog(section, activity)
                                   }
@@ -595,20 +592,16 @@ export function TripSections({
                                 </Button>
                               </div>
                             </div>
-                            {index < section.activities.length - 1 && (
-                              <Separator className="my-1" />
-                            )}
                           </div>
                         ))}
 
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="mt-2"
                           onClick={() => addActivity(section.id)}
                           disabled={generatingSectionId === section.id}
                         >
-                          <Plus className="h-3 w-3 mr-1" />
+                          <Plus className="h-3 w-3" />
                           Add Activity
                         </Button>
                       </div>
