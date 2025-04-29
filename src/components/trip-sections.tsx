@@ -480,49 +480,40 @@ export function TripSections({
                     <div className="p-2 border-l border-r border-b rounded-b-md">
                       <div className="grid gap-3">
                         {section.activities.map((activity, index) => (
-                          <div key={index} className="group">
-                            <div className="flex items-start border-b">
-                              <div className="flex-1">
-                                <div className="flex justify-between items-center bg-muted w-full py-2 px-2">
-                                  <h4 className="font-medium">
-                                    {activity.title}
-                                  </h4>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    onClick={() =>
-                                      removeActivity(section.id, activity.title)
-                                    }
-                                    disabled={
-                                      generatingSectionId === section.id
-                                    }
-                                  >
-                                    <X className="h-3 w-3" />
-                                    <span className="sr-only">
-                                      Remove activity
-                                    </span>
-                                  </Button>
-                                </div>
-                                <div className="prose prose-sm max-w-none mt-2 pl-2">
-                                  <ReactMarkdown>
-                                    {activity.description}
-                                  </ReactMarkdown>
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="px-2 py-1 h-auto mt-2 text-sm text-muted-foreground hover:text-foreground"
-                                  onClick={() =>
-                                    openEditDialog(section, activity)
-                                  }
-                                  disabled={generatingSectionId === section.id}
-                                >
-                                  <Edit className="h-3 w-3 mr-1" />
-                                  Edit
-                                </Button>
-                              </div>
+                          <div
+                            key={index}
+                            className="flex-1 items-start border-b py-3"
+                          >
+                            <div className="flex justify-between items-center bg-muted w-full py-2 px-2">
+                              <h4 className="font-medium">{activity.title}</h4>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 w-6 p-0"
+                                onClick={() =>
+                                  removeActivity(section.id, activity.title)
+                                }
+                                disabled={generatingSectionId === section.id}
+                              >
+                                <X className="h-3 w-3" />
+                                <span className="sr-only">Remove activity</span>
+                              </Button>
                             </div>
+                            <div className="prose prose-sm max-w-none mt-2 pl-2">
+                              <ReactMarkdown>
+                                {activity.description}
+                              </ReactMarkdown>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="px-2 py-1 h-auto mt-2 text-sm text-muted-foreground hover:text-foreground"
+                              onClick={() => openEditDialog(section, activity)}
+                              disabled={generatingSectionId === section.id}
+                            >
+                              <Edit className="h-3 w-3 mr-1" />
+                              Edit
+                            </Button>
                           </div>
                         ))}
 
