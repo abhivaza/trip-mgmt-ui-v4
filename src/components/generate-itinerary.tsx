@@ -70,7 +70,7 @@ export const GenerateItinerary: React.FC = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto mb-12">
+    <div className="max-w-xl mx-auto mb-6">
       <div className="flex items-center bg-white rounded-lg shadow-md">
         <Input
           type="text"
