@@ -29,7 +29,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
-import * as SECTION_TEMPLATES from "@/constants/trip-things-todo-templates.json";
+import { SECTION_TEMPLATES } from "@/constants/trip-things-todo-templates";
 
 interface CustomSectionsProps {
   tripId: string;
