@@ -110,20 +110,23 @@ export const GenerateItinerary: React.FC = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto mb-6">
+    <div className="max-w-xl mx-auto mb-2">
       <div className="relative rounded-md">
         <textarea
-          placeholder="5 days tour of New York city."
+          placeholder="5 days kid friendly tour of New York city... (Or pick example prompts from below and customize)"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleGenerateItinerary();
+            }
+          }}
           className="w-full p-3 border rounded-lg focus:ring-0 focus:outline-none resize-none pr-24"
           rows={3}
         />
 
-        <div className="mt-3 overflow-hidden bg-gray-50 rounded-lg p-2">
-          <div className="text-[10px] text-gray-500 mb-1">
-            Example prompts (click to use):
-          </div>
+        <div className="overflow-hidden bg-gray-50 rounded-lg p-2">
           <div className="relative overflow-hidden text-xs">
             <div
               ref={tickerRef}
