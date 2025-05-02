@@ -15,7 +15,6 @@ import { Input } from "./ui/input";
 interface EditActivityDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string | null;
   editName: string;
   setEditName: (name: string) => void;
   editContent: string;
@@ -23,12 +22,13 @@ interface EditActivityDialogProps {
   onSave: () => Promise<void>;
   onGenerateAI: () => Promise<void>;
   isGenerating: boolean;
+  specialRequest?: string;
+  setSpecialRequest?: (request: string) => void;
 }
 
 export const EditActivityDialog = ({
   isOpen,
   onClose,
-  title,
   editName,
   setEditName,
   editContent,
@@ -36,21 +36,26 @@ export const EditActivityDialog = ({
   onSave,
   onGenerateAI,
   isGenerating,
+  specialRequest,
+  setSpecialRequest,
 }: EditActivityDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{title} - Edit Activity</DialogTitle>
+          <DialogTitle>{editName}</DialogTitle>
         </DialogHeader>
 
-        <div className="py-4 space-y-4">
+        <div className="space-y-4">
           <div className="flex items-center bg-white rounded-lg shadow-md">
             <Input
               type="text"
-              placeholder={title || "Activity Name"}
-              value={editName}
-              onChange={(e) => setEditName(e.target.value)}
+              placeholder={
+                specialRequest ||
+                "Provide instructions to customize. e.g. Make it more kid friendly"
+              }
+              value={specialRequest}
+              onChange={(e) => setSpecialRequest?.(e.target.value)}
               className="flex-grow border-none focus:ring-0"
             />
             <Button

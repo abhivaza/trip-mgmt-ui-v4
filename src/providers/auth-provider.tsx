@@ -1,8 +1,6 @@
-// src/AuthContext.tsx
+
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  User,
-} from "firebase/auth";
+import { User } from "firebase/auth";
 import { auth } from "@/firebase";
 
 interface AuthContextType {

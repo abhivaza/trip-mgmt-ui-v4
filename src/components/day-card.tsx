@@ -44,6 +44,7 @@ export const DayCard = ({
   const [editName, setEditName] = useState<string>("");
   const [editContent, setEditContent] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [specialRequest, setSpecialRequest] = useState("");
 
   const api = useApi();
   const { toast } = useToast();
@@ -98,20 +99,22 @@ export const DayCard = ({
     }
   };
 
-  const generateAIContent = async () => {
+  const generateEditAIContent = async () => {
     setIsGenerating(true);
     try {
       const response = await api.post<
-        { place: string; specialRequest: string },
+        { place: string; content: string; specialRequest: string },
         ItineraryDayActivity
       >(`/app/trip/${tripId}/day/generate`, {
         place: day.place,
-        specialRequest: editName,
+        content: editContent,
+        specialRequest: specialRequest,
       });
 
       if (response) {
         // Update the edit content
         setEditContent(response.description || "");
+        setEditName(response.title);
 
         // Update local itinerary state
         const updatedItinerary = { ...itinerary };
@@ -152,7 +155,7 @@ export const DayCard = ({
           <span>
             Day {day.dayNumber}: {day.title}
           </span>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-muted-foreground hidden">
             {new Date(day.date).toLocaleDateString("en-US", {
               weekday: "long",
             })}
@@ -198,14 +201,15 @@ export const DayCard = ({
       <EditActivityDialog
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
-        title={editingSection?.title || ""}
         editName={editName}
         setEditName={setEditName}
         editContent={editContent}
         setEditContent={setEditContent}
         onSave={saveEditedContent}
-        onGenerateAI={generateAIContent}
+        onGenerateAI={generateEditAIContent}
         isGenerating={isGenerating}
+        specialRequest={specialRequest}
+        setSpecialRequest={setSpecialRequest}
       />
     </Card>
   );
