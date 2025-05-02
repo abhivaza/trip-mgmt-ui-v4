@@ -110,7 +110,7 @@ export const GenerateItinerary: React.FC = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto mb-2">
+    <div className="max-w-xl mx-auto">
       <div className="relative rounded-md">
         <textarea
           placeholder="5 days kid friendly tour of New York city... (Or pick example prompts from below and customize)"
@@ -122,11 +122,11 @@ export const GenerateItinerary: React.FC = () => {
               handleGenerateItinerary();
             }
           }}
-          className="w-full p-3 border rounded-lg focus:ring-0 focus:outline-none resize-none pr-24"
+          className="w-full p-3 rounded-lg focus:outline-none resize-none"
           rows={3}
         />
 
-        <div className="overflow-hidden bg-gray-50 rounded-lg p-2">
+        <div className="overflow-hidden bg-white rounded-lg p-2">
           <div className="relative overflow-hidden text-xs">
             <div
               ref={tickerRef}
@@ -153,11 +153,7 @@ export const GenerateItinerary: React.FC = () => {
           </div>
         </div>
         <div className="mt-3 flex justify-center">
-          <Button
-            onClick={handleGenerateItinerary}
-            disabled={isLoading}
-            size="sm"
-          >
+          <Button onClick={handleGenerateItinerary} disabled={isLoading}>
             {!isLoading && <Sparkles className="h-4 w-4 mr-1" />}
             {isLoading ? "Generating..." : "Let's go"}
           </Button>

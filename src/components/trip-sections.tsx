@@ -61,6 +61,7 @@ export function TripSections({
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({});
+  const [specialRequest, setSpecialRequest] = useState("");
 
   const { toast } = useToast();
 
@@ -265,23 +266,30 @@ export function TripSections({
     setEditingActivity(null);
   };
 
-  const generateAIContent = async () => {
+  const generateEditAIContent = async () => {
     if (!editingSection || !editingActivity) return;
 
     setIsGenerating(true);
 
     try {
       const response = await api.post<
-        { activity: string; place: string; specialRequest: string },
+        {
+          activity: string;
+          content: string;
+          place: string;
+          specialRequest: string;
+        },
         Activity
       >(`/app/trip/${tripId}/section/activity/generate`, {
         activity: editingSection.title,
+        content: editContent,
         place: place,
-        specialRequest: editName,
+        specialRequest: specialRequest || "",
       });
 
       if (response) {
         setEditContent(response.description || "");
+        setEditName(response.title);
       }
     } catch (error) {
       toast({
@@ -539,18 +547,18 @@ export function TripSections({
       <EditActivityDialog
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
-        title={editingSection?.title || ""}
         editName={editName}
-        setEditName={setEditName}
         editContent={editContent}
         setEditContent={setEditContent}
         onSave={async () => {
           return saveEditedContent();
         }}
         onGenerateAI={async () => {
-          return generateAIContent();
+          return generateEditAIContent();
         }}
         isGenerating={isGenerating}
+        specialRequest={specialRequest}
+        setSpecialRequest={setSpecialRequest}
       />
     </>
   );
