@@ -16,7 +16,6 @@ interface EditActivityDialogProps {
   isOpen: boolean;
   onClose: () => void;
   editName: string;
-  setEditName: (name: string) => void;
   editContent: string;
   setEditContent: (content: string) => void;
   onSave: () => Promise<void>;
@@ -30,7 +29,6 @@ export const EditActivityDialog = ({
   isOpen,
   onClose,
   editName,
-  setEditName,
   editContent,
   setEditContent,
   onSave,

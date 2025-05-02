@@ -548,7 +548,6 @@ export function TripSections({
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
         editName={editName}
-        setEditName={setEditName}
         editContent={editContent}
         setEditContent={setEditContent}
         onSave={async () => {
