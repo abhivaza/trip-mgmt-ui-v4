@@ -110,7 +110,7 @@ export const GenerateItinerary: React.FC = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto mb-2">
+    <div className="max-w-xl mx-auto">
       <div className="relative rounded-md">
         <textarea
           placeholder="5 days kid friendly tour of New York city... (Or pick example prompts from below and customize)"
@@ -122,7 +122,7 @@ export const GenerateItinerary: React.FC = () => {
               handleGenerateItinerary();
             }
           }}
-          className="w-full p-3 border rounded-lg focus:ring-0 focus:outline-none resize-none pr-24"
+          className="w-full p-3 border rounded-lg focus:ring-0 focus:outline-none resize-none"
           rows={3}
         />
 
