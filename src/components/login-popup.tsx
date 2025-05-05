@@ -305,7 +305,9 @@ export default function LoginPopup({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">
+                    Enter email to receive sign-in link
+                  </Label>
                   <Input
                     id="email"
                     type="email"
