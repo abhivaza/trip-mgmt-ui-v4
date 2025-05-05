@@ -19,6 +19,7 @@ import { useParams } from "next/navigation";
 import { Loader2, Send, Trash2, User, Bot } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { TRY_AGAIN_TEXT } from "@/lib/app-utils";
+import ReactMarkdown from "react-markdown";
 
 type Message = {
   role: "user" | "assistant";
@@ -52,11 +53,10 @@ export function ChatbotSection({
     chatInitType === "trip-specific"
       ? [
           "How is my day 2 looking?",
-          "Did I visit any historic attraction in this trip?",
+          "Can you please give me history of the city?",
         ]
       : [
           "Are there any historic attractions I visited?",
-          "What cities I visited in Unites States?",
           "What kid friendly places I visited during my trips?",
         ];
 
@@ -163,7 +163,7 @@ export function ChatbotSection({
 
   return (
     <Card className="w-full mx-auto">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
         <CardTitle>Trip Assistant</CardTitle>
         <Button
           variant="outline"
@@ -174,8 +174,8 @@ export function ChatbotSection({
           <Trash2 className="h-4 w-4" />
         </Button>
       </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[400px] pr-4" ref={scrollAreaRef}>
+      <CardContent className="p-4 pt-0">
+        <ScrollArea className="h-[300px]" ref={scrollAreaRef}>
           {messages.map((message, index) => (
             <div
               key={index}
@@ -205,7 +205,7 @@ export function ChatbotSection({
                         : "bg-secondary text-secondary-foreground"
                     }`}
                   >
-                    {message.content}
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
                   </span>
                   <span className="text-xs text-muted-foreground mt-1">
                     {formatTimestamp(message.timestamp)}
@@ -221,7 +221,7 @@ export function ChatbotSection({
           )}
         </ScrollArea>
       </CardContent>
-      <CardFooter className="flex flex-col space-y-3">
+      <CardFooter className="flex flex-col space-y-3 p-4">
         <form onSubmit={handleSendMessage} className="flex w-full gap-2">
           <div className="flex-1 relative">
             <Input
@@ -232,6 +232,7 @@ export function ChatbotSection({
               placeholder="Ask a question about your trip..."
               disabled={isLoading}
               aria-label="Chat input"
+              className="pr-12"
             />
             <span className="absolute right-2 bottom-2 text-xs text-muted-foreground">
               {input.length}/{MAX_CHAR_COUNT}
@@ -248,7 +249,9 @@ export function ChatbotSection({
 
         {/* Sample questions section */}
         <div className="w-full">
-          <p className="text-xs text-muted-foreground mb-1">Try asking:</p>
+          <p className="text-xs text-muted-foreground mb-1">
+            Try asking (click to use):
+          </p>
           <div className="flex flex-wrap gap-2">
             {sampleQuestions.map((question, index) => (
               <Button
