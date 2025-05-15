@@ -442,12 +442,12 @@ export function TripSections({
                   onOpenChange={() => toggleSection(section.id)}
                   className="w-full"
                 >
-                  <div className="flex items-center gap-2 p-2 bg-muted border-x border-y">
+                  <div className="flex items-center p-2 bg-muted border-x border-y">
                     <CollapsibleTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="flex w-full items-center justify-start gap-2 px-0 h-auto"
+                        className="flex items-center justify-start gap-2 px-0 h-auto min-w-0 max-w-full"
                       >
                         {expandedSections[section.id] ? (
                           <ChevronDown className="h-4 w-4 shrink-0" />
@@ -456,15 +456,19 @@ export function TripSections({
                         )}
 
                         {generatingSectionId === section.id ? (
-                          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                          <Loader2 className="h-5 w-5 shrink-0 animate-spin text-primary" />
                         ) : (
                           getSectionIcon(section.title)
                         )}
-                        <h3 className="font-medium text-base">
+
+                        <h3 className="font-medium text-base truncate min-w-0">
                           {section.title}
                         </h3>
+
                         {generatingSectionId === section.id && (
-                          <Badge variant="secondary">Generating...</Badge>
+                          <Badge variant="secondary" className="shrink-0">
+                            Generating...
+                          </Badge>
                         )}
                       </Button>
                     </CollapsibleTrigger>
@@ -472,7 +476,7 @@ export function TripSections({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 w-6 p-0 ml-auto"
+                      className="h-6 w-6 p-0 ml-auto shrink-0"
                       onClick={(e) => {
                         e.stopPropagation();
                         removeSection(section.id);
