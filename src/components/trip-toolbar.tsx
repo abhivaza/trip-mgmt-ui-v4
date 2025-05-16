@@ -68,6 +68,7 @@ function ShareTripDialog({
   const [userToDelete, setUserToDelete] = useState<SharedUser | null>(null);
   const api = useApi();
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -95,6 +96,8 @@ function ShareTripDialog({
     } finally {
       setIsDeleteDialogOpen(false);
       setUserToDelete(null);
+      onOpenChange(false);
+      router.refresh();
     }
   };
 
@@ -203,6 +206,7 @@ export function TripToolbar({ trip, className }: ShareTripButtonProps) {
   const handleShare = async (email: string) => {
     try {
       await api.post(`/app/trip/${trip.id}/share`, { email });
+      setIsShareDialogOpen(false);
       toast({
         title: "Success",
         description: "Trip shared successfully!",
@@ -214,7 +218,9 @@ export function TripToolbar({ trip, className }: ShareTripButtonProps) {
         description: "Failed to share trip. Please try again.",
         variant: "destructive",
       });
-      throw error; // Re-throw to handle in the dialog
+    } finally {
+      setIsShareDialogOpen(false);
+      router.refresh();
     }
   };
 
