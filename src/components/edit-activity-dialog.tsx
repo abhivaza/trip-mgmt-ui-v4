@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { MarkdownEditor } from "@/components/markdown-editor";
+import { MarkdownEditor } from "@/components/markdown-editor-mdx";
 import { Sparkles } from "lucide-react";
 import { Input } from "./ui/input";
 
